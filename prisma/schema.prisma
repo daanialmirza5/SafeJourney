@@ -1,0 +1,524 @@
+// SafeJourney — Closed-Loop Maternal & Newborn Referral Platform
+// Prisma schema. SQLite is used as the demo-friendly zero-config database.
+// SQLite has no native enum type, so every "enum-like" field below is a
+// plain String column; the allowed values are documented in comments and
+// enforced in application code via the literal union types in
+// src/lib/types/enums.ts + zod validation at the API boundary. Swapping
+// "provider" to "postgresql" (and restoring real `enum` blocks, optional)
+// is a drop-in upgrade path for production.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Core identity & facility models
+// ---------------------------------------------------------------------------
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  /// RoleName: DOCTOR | COORDINATOR | PATIENT | CAREGIVER | FOLLOWUP | ADMIN
+  role         String
+  language     String   @default("en")
+  phone        String?
+  facilityId   String?
+  facility     Facility? @relation(fields: [facilityId], references: [id])
+  isDemo       Boolean  @default(true)
+  /// Set once the first-time onboarding flow (spec section 58) is
+  /// completed. Null means "show onboarding on next login" -- checked for
+  /// PATIENT/CAREGIVER roles only (see src/app/(app)/layout.tsx).
+  onboardedAt  DateTime?
+  /// Soft-delete (spec section 45): non-null blocks login and hides the
+  /// account from active-user pickers, but preserves every historical
+  /// record (referrals, audit entries, events) the account is attached to.
+  /// Admin-only, always reversible, always audited -- see
+  /// src/app/api/admin/users/[id]/{deactivate,reactivate}/route.ts.
+  deactivatedAt DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  createdPatients        Patient[]              @relation("PatientCreatedBy")
+  patientAccount         Patient?               @relation("PatientAccount")
+  caregiverAccess        CaregiverAccess[]
+  referralsAsDoctor      ReferralCase[]         @relation("ReferringDoctor")
+  referralEvents         ReferralEvent[]
+  uploadedDocuments      Document[]
+  assignedFollowUps      FollowUpTask[]         @relation("FollowUpAssignee")
+  createdFollowUps       FollowUpTask[]         @relation("FollowUpCreatedBy")
+  resolvedFollowUps      FollowUpTask[]         @relation("FollowUpResolvedBy")
+  notifications          Notification[]
+  auditLogs              AuditLog[]
+  consentsGranted        Consent[]              @relation("ConsentGrantedTo")
+  acknowledgedBackReferrals BackReferral[]       @relation("BackReferralAcknowledgedBy")
+
+  @@index([role])
+  @@index([facilityId])
+}
+
+model Facility {
+  id        String   @id @default(cuid())
+  name      String
+  /// FacilityType: REFERRING | RECEIVING | BOTH
+  type      String
+  district  String
+  state     String
+  isDemo    Boolean  @default(true)
+  /// Soft-delete (spec section 45): non-null hides the facility from
+  /// "create referral" facility pickers and new-staff assignment, but
+  /// preserves every historical referral that named it. Reversible.
+  deactivatedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users              User[]
+  patients           Patient[]
+  referralsFrom      ReferralCase[] @relation("ReferringFacility")
+  referralsTo        ReferralCase[] @relation("ReceivingFacility")
+  transportFrom      TransportRequest[] @relation("PickupFacility")
+  transportTo        TransportRequest[] @relation("DestinationFacility")
+
+  @@index([type])
+}
+
+// ---------------------------------------------------------------------------
+// Patient / family models
+// ---------------------------------------------------------------------------
+
+model Patient {
+  id          String   @id @default(cuid())
+  pseudonym   String
+  name        String
+  dateOfBirth DateTime?
+  sex         String
+  facilityId  String
+  facility    Facility @relation(fields: [facilityId], references: [id])
+  createdById String
+  createdBy   User     @relation("PatientCreatedBy", fields: [createdById], references: [id])
+  /// Optional linked PATIENT-role account, so the patient can log in and
+  /// view their own referral journey. Null for demo patients seeded without
+  /// a portal account.
+  userId      String?  @unique
+  user        User?    @relation("PatientAccount", fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  caregiverAccess CaregiverAccess[]
+  referrals       ReferralCase[]
+  familyCase      FamilyCase?
+  consents        Consent[]
+
+  @@index([facilityId])
+}
+
+model CaregiverAccess {
+  id           String   @id @default(cuid())
+  patientId    String
+  patient      Patient  @relation(fields: [patientId], references: [id])
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  /// CaregiverPermission: VIEW_ONLY | DOCUMENT_HELP | FULL_ADMINISTRATIVE_ASSISTANCE
+  permission   String   @default("VIEW_ONLY")
+  grantedAt    DateTime @default(now())
+  revokedAt    DateTime?
+
+  @@index([patientId])
+  @@index([userId])
+}
+
+model FamilyCase {
+  id        String   @id @default(cuid())
+  patientId String   @unique
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  createdAt DateTime @default(now())
+
+  motherCase  MotherCase?
+  newbornCase NewbornCase?
+}
+
+model MotherCase {
+  id           String     @id @default(cuid())
+  familyCaseId String     @unique
+  familyCase   FamilyCase @relation(fields: [familyCaseId], references: [id])
+  createdAt    DateTime   @default(now())
+}
+
+model NewbornCase {
+  id           String     @id @default(cuid())
+  familyCaseId String     @unique
+  familyCase   FamilyCase @relation(fields: [familyCaseId], references: [id])
+  name         String
+  sex          String?
+  birthDate    DateTime?
+  createdAt    DateTime   @default(now())
+}
+
+model Consent {
+  id              String   @id @default(cuid())
+  patientId       String
+  patient         Patient  @relation(fields: [patientId], references: [id])
+  grantedToUserId String
+  grantedToUser   User     @relation("ConsentGrantedTo", fields: [grantedToUserId], references: [id])
+  /// ConsentScope: RECEIVING_FACILITY | CAREGIVER | FOLLOW_UP_WORKER | COORDINATOR
+  scope           String
+  grantedAt       DateTime @default(now())
+  revokedAt       DateTime?
+
+  @@index([patientId])
+}
+
+// ---------------------------------------------------------------------------
+// Referral case (core domain object)
+// ---------------------------------------------------------------------------
+
+model ReferralCase {
+  id                  String   @id @default(cuid())
+  referralCode        String   @unique
+  passportToken       String   @unique
+  patientId           String
+  patient             Patient  @relation(fields: [patientId], references: [id])
+  referringFacilityId String
+  referringFacility   Facility @relation("ReferringFacility", fields: [referringFacilityId], references: [id])
+  receivingFacilityId String
+  receivingFacility   Facility @relation("ReceivingFacility", fields: [receivingFacilityId], references: [id])
+  referringDoctorId   String
+  referringDoctor     User     @relation("ReferringDoctor", fields: [referringDoctorId], references: [id])
+
+  /// ReferralStatus: DRAFT | CREATED | SENT | ACKNOWLEDGED | TRANSPORT_REQUESTED
+  /// | TRANSPORT_ASSIGNED | IN_TRANSIT | ARRIVED | UNDER_CARE | DISCHARGED
+  /// | BACK_REFERRED | FOLLOW_UP_PENDING | FOLLOW_UP_CONFIRMED | CLOSED | CANCELLED
+  status              String   @default("CREATED")
+  /// OperationalStatus: ON_TRACK | ACTION_REQUIRED | STUCK | CLOSED
+  operationalStatus   String   @default("ON_TRACK")
+  /// ReferralPriority: ROUTINE | URGENT | EMERGENCY
+  priority            String   @default("ROUTINE")
+  transportRequired   Boolean  @default(false)
+  doctorNote          String
+  adminNotes          String?
+  /// Where the patient goes / what's next after discharge (e.g. "Home",
+  /// "Transferred to District Hospital ICU"). Administrative/coordination
+  /// record only -- never a clinical discharge criterion or fitness claim.
+  dischargeDestination String?
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  sentAt              DateTime?
+  acknowledgedAt      DateTime?
+  arrivedAt           DateTime?
+  dischargedAt        DateTime?
+  backReferredAt      DateTime?
+  closedAt            DateTime?
+  cancelledAt         DateTime?
+  stuckSince          DateTime?
+
+  events              ReferralEvent[]
+  transportRequests   TransportRequest[]
+  documents           Document[]
+  benefitEvaluations  BenefitEvaluation[]
+  adminTasks          AdministrativeTask[]
+  followUpTasks       FollowUpTask[]
+  notifications       Notification[]
+  backReferral        BackReferral?
+
+  @@index([status])
+  @@index([patientId])
+  @@index([referringFacilityId])
+  @@index([receivingFacilityId])
+  @@index([createdAt])
+}
+
+model ReferralEvent {
+  id          String   @id @default(cuid())
+  referralId  String
+  referral    ReferralCase @relation(fields: [referralId], references: [id])
+  actorId     String?
+  actor       User?    @relation(fields: [actorId], references: [id])
+  /// RoleName, nullable for system-generated events
+  actorRole   String?
+  action      String
+  fromStatus  String?
+  toStatus    String?
+  note        String?
+  createdAt   DateTime @default(now())
+
+  @@index([referralId])
+  @@index([createdAt])
+}
+
+model BackReferral {
+  id                 String   @id @default(cuid())
+  referralId         String   @unique
+  referral           ReferralCase @relation(fields: [referralId], references: [id])
+  generatedAt        DateTime @default(now())
+  sentAt             DateTime?
+  dischargeSummary   String
+  pendingAdminItems  String
+  documentPackage    String
+  assignedFollowUpId String?
+  familyNotified     Boolean  @default(false)
+  /// Set once someone at the *origin* (referring) facility acknowledges
+  /// receiving this back-referral (spec: closed-loop back-referral).
+  /// Follow-up tasks are only created once this happens -- see
+  /// referralService.ts::acknowledgeBackReferral. Null means still
+  /// awaiting acknowledgment.
+  acknowledgedAt     DateTime?
+  acknowledgedById   String?
+  acknowledgedBy     User?    @relation("BackReferralAcknowledgedBy", fields: [acknowledgedById], references: [id])
+}
+
+// ---------------------------------------------------------------------------
+// Transport
+// ---------------------------------------------------------------------------
+
+model TransportRequest {
+  id                    String   @id @default(cuid())
+  referralId            String
+  referral              ReferralCase @relation(fields: [referralId], references: [id])
+  /// TransportStatus: NOT_REQUESTED | REQUESTED | ASSIGNED | EN_ROUTE_TO_PICKUP
+  /// | PICKED_UP | IN_TRANSIT | ARRIVED | CANCELLED
+  status                String   @default("REQUESTED")
+  pickupFacilityId      String
+  pickupFacility        Facility @relation("PickupFacility", fields: [pickupFacilityId], references: [id])
+  destinationFacilityId String
+  destinationFacility   Facility @relation("DestinationFacility", fields: [destinationFacilityId], references: [id])
+  requestedAt           DateTime @default(now())
+  assignedVehiclePseudo String?
+  etaMinutes            Int?
+  updatedAt             DateTime @updatedAt
+
+  @@index([referralId])
+}
+
+// ---------------------------------------------------------------------------
+// Documents
+// ---------------------------------------------------------------------------
+
+model Document {
+  id             String   @id @default(cuid())
+  referralId     String
+  referral       ReferralCase @relation(fields: [referralId], references: [id])
+  uploadedById   String
+  uploadedBy     User     @relation(fields: [uploadedById], references: [id])
+  /// DocumentType: REFERRAL_NOTE | IDENTITY_DOCUMENT | HOSPITAL_DOCUMENT
+  /// | ADMINISTRATIVE_FORM | TRANSPORT_DOCUMENT | DISCHARGE_DOCUMENT
+  /// | BIRTH_DOCUMENT | BILL_RECEIPT | ENTITLEMENT_APPLICATION | UNKNOWN
+  type           String   @default("UNKNOWN")
+  storageKey     String
+  originalName   String
+  mimeType       String
+  size           Int
+  /// DocumentStatus: UPLOADED | EXTRACTED | CONFIRMED | REJECTED
+  status         String   @default("UPLOADED")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  extraction     DocumentExtraction?
+
+  @@index([referralId])
+}
+
+model DocumentExtraction {
+  id           String   @id @default(cuid())
+  documentId   String   @unique
+  document     Document @relation(fields: [documentId], references: [id])
+  documentType String
+  fields       String
+  confidence   Float
+  warnings     String
+  createdAt    DateTime @default(now())
+}
+
+// ---------------------------------------------------------------------------
+// Benefits / entitlements (deterministic rule engine)
+// ---------------------------------------------------------------------------
+
+model BenefitRule {
+  id                   String   @id @default(cuid())
+  name                 String
+  state                String
+  /// FacilityType or null (applies to any)
+  facilityType         String?
+  conditions           String
+  documentRequirements String
+  sourceUrl            String
+  effectiveDate        DateTime
+  lastVerified         DateTime
+  disclaimer           String
+  /// BenefitRuleStatus: ACTIVE | INACTIVE
+  status               String   @default("ACTIVE")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  evaluations          BenefitEvaluation[]
+}
+
+model BenefitEvaluation {
+  id                String   @id @default(cuid())
+  referralId        String
+  referral          ReferralCase @relation(fields: [referralId], references: [id])
+  benefitRuleId     String
+  benefitRule       BenefitRule @relation(fields: [benefitRuleId], references: [id])
+  /// BenefitResult: POTENTIALLY_APPLICABLE | NOT_APPLICABLE | NEEDS_VERIFICATION
+  result            String
+  reason            String
+  requiredDocuments String
+  nextActions       String
+  createdAt         DateTime @default(now())
+
+  @@index([referralId])
+}
+
+// ---------------------------------------------------------------------------
+// Administrative tasks
+// ---------------------------------------------------------------------------
+
+model AdministrativeTask {
+  id         String   @id @default(cuid())
+  referralId String
+  referral   ReferralCase @relation(fields: [referralId], references: [id])
+  title      String
+  category   String
+  /// AdminTaskStatus: COMPLETE | PENDING | NEEDS_REVIEW | NOT_APPLICABLE
+  status     String   @default("PENDING")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([referralId])
+}
+
+// ---------------------------------------------------------------------------
+// Follow-up
+// ---------------------------------------------------------------------------
+
+model FollowUpTask {
+  id           String   @id @default(cuid())
+  referralId   String
+  referral     ReferralCase @relation(fields: [referralId], references: [id])
+  title        String
+  description  String
+  assignedToId String?
+  assignedTo   User?    @relation("FollowUpAssignee", fields: [assignedToId], references: [id])
+  dueDate      DateTime
+  /// FollowUpStatus: PENDING | DUE | OVERDUE | COMPLETED | CANCELLED
+  status       String   @default("PENDING")
+  /// FollowUpTaskCategory: DISCHARGE_HANDOFF | ADMIN_FOLLOW_UP | HOME_VISIT |
+  /// IMMUNIZATION_REMINDER | GROWTH_CHECK | CONTINUITY_REVIEW (newborn
+  /// six-to-eight-month continuity journey; see newbornContinuity.ts)
+  category     String   @default("DISCHARGE_HANDOFF")
+  source       String
+  createdById  String
+  createdBy    User     @relation("FollowUpCreatedBy", fields: [createdById], references: [id])
+  completedAt  DateTime?
+  /// Who closed this task, whether by completing or skipping it -- and
+  /// what they recorded (a completion note, or the required skip reason).
+  /// Previously only visible in the (admin-only) audit log; a FOLLOWUP
+  /// worker or coordinator looking at the task itself had no way to see
+  /// who closed it or why.
+  resolvedById   String?
+  resolvedBy     User?    @relation("FollowUpResolvedBy", fields: [resolvedById], references: [id])
+  resolutionNote String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([referralId])
+  @@index([assignedToId])
+  @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// Notifications
+// ---------------------------------------------------------------------------
+
+model Notification {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  /// NotificationCategory: REFERRAL | TRANSPORT | DOCUMENT | ADMINISTRATIVE | FOLLOW_UP | SYSTEM
+  category   String
+  title      String
+  body       String
+  referralId String?
+  referral   ReferralCase? @relation(fields: [referralId], references: [id])
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ---------------------------------------------------------------------------
+// Audit trail & system settings
+// ---------------------------------------------------------------------------
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actor      User?    @relation(fields: [actorId], references: [id])
+  /// RoleName, nullable for system-generated events
+  actorRole  String?
+  entityType String
+  entityId   String
+  action     String
+  oldValue   String?
+  newValue   String?
+  metadata   String?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+/// Editable notification copy (spec section 56 admin panel: "Notification
+/// Templates"). `title`/`body` may contain {{placeholder}} tokens filled in
+/// by src/lib/notifications/templates.ts at send time. If no row exists for
+/// a given `key`, the hard-coded default in that same file is used, so the
+/// app never depends on this table being seeded to send notifications.
+model NotificationTemplate {
+  id         String   @id @default(cuid())
+  key        String   @unique
+  /// NotificationCategory: REFERRAL | TRANSPORT | DOCUMENT | ADMINISTRATIVE | FOLLOW_UP | SYSTEM
+  category   String
+  title      String
+  body       String
+  updatedAt  DateTime @updatedAt
+}
+
+/// Configurable newborn continuity milestone schedule (spec section 30).
+/// Unlike NotificationTemplate, this table IS the source of truth -- there
+/// is no hard-coded fallback -- so an admin can add, edit, deactivate, or
+/// reorder milestones and every subsequent back-referral picks up the
+/// change. src/lib/referral/newbornContinuity.ts still ships the original
+/// six milestones as NEWBORN_CONTINUITY_SCHEDULE, used only to seed this
+/// table's initial rows. Every create/update/delete is audit-logged (see
+/// recordAuditEvent calls in the milestone-templates API routes).
+model NewbornMilestoneTemplate {
+  id          String   @id @default(cuid())
+  /// FollowUpTaskCategory: HOME_VISIT | IMMUNIZATION_REMINDER | GROWTH_CHECK | CONTINUITY_REVIEW
+  category    String
+  title       String
+  description String
+  /// Days after back-referral this milestone falls due. Bounded 1-1000 at
+  /// the validation layer (src/lib/referral/newbornContinuity.ts) -- never
+  /// a clinical schedule, purely a coordination reminder offset.
+  offsetDays  Int
+  sortOrder   Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([active])
+}
