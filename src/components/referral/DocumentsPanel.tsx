@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { FileText, Upload, Sparkles, Check, X, ExternalLink, Loader2 } from "lucide-react";
 import { apiFetch } from "@/lib/clientApi";
@@ -33,6 +33,26 @@ interface Doc {
   extraction: DocExtraction | null;
 }
 
+function safeFields(extraction: DocExtraction | null): Record<string, string> {
+  if (!extraction?.fields) return {};
+  if (typeof extraction.fields === "object") return extraction.fields as Record<string, string>;
+  try {
+    return JSON.parse(extraction.fields);
+  } catch {
+    return {};
+  }
+}
+
+function safeWarnings(extraction: DocExtraction | null): string[] {
+  if (!extraction?.warnings) return [];
+  if (Array.isArray(extraction.warnings)) return extraction.warnings;
+  try {
+    return JSON.parse(extraction.warnings);
+  } catch {
+    return [];
+  }
+}
+
 export function DocumentsPanel({
   referralId,
   initialDocuments,
@@ -56,6 +76,10 @@ export function DocumentsPanel({
   const router = useRouter();
   const { showToast } = useToast();
 
+  useEffect(() => {
+    setDocuments(initialDocuments);
+  }, [initialDocuments]);
+
   function updateDoc(id: string, patch: Partial<Doc>) {
     setDocuments((prev) => prev.map((d) => (d.id === id ? { ...d, ...patch } : d)));
   }
@@ -75,6 +99,7 @@ export function DocumentsPanel({
       setDocuments((prev) => [{ ...data.document, extraction: null }, ...prev]);
       if (fileInputRef.current) fileInputRef.current.value = "";
       showToast("Document uploaded.");
+      router.refresh();
     } catch (err) {
       showToast(err instanceof Error ? err.message : "Upload failed.", "error");
     } finally {
@@ -88,6 +113,7 @@ export function DocumentsPanel({
       const data = await apiFetch<{ extraction: DocExtraction }>(`/api/documents/${doc.id}/extract`, { method: "POST" });
       updateDoc(doc.id, { status: "EXTRACTED", extraction: data.extraction, type: data.extraction.documentType });
       showToast("Document extracted -- please review before confirming.");
+      router.refresh();
     } catch (err) {
       showToast(err instanceof Error ? err.message : "Extraction failed.", "error");
     } finally {
@@ -117,29 +143,29 @@ export function DocumentsPanel({
       await apiFetch(`/api/documents/${doc.id}/reject`, { method: "POST", body: JSON.stringify({ reason }) });
       updateDoc(doc.id, { status: "REJECTED" });
       showToast("Document rejected.");
+      router.refresh();
     } catch (err) {
-      showToast(err instanceof Error ? err.message : "Failed to reject document.", "error");
+      showToast(err instanceof Error ? err.message : "Rejection failed.", "error");
     } finally {
       setBusyId(null);
     }
   }
 
   return (
-    <div>
-      <div className="mb-4 flex flex-col gap-2 rounded-lg border border-dashed border-slate-300 p-3 sm:flex-row sm:items-center">
+    <div className="space-y-4">
+      {/* Upload controls */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <input
-          ref={fileInputRef}
           data-testid="document-file-input"
+          ref={fileInputRef}
           type="file"
-          accept=".pdf,.jpg,.jpeg,.png"
-          aria-label="Choose a document file to upload"
-          className="flex-1 text-xs"
+          accept=".pdf,.png,.jpg,.jpeg"
+          className="text-xs file:mr-2 file:rounded-md file:border-0 file:bg-brand-soft file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-brand hover:file:bg-brand-soft/80"
         />
         <select
           value={typeHint}
           onChange={(e) => setTypeHint(e.target.value)}
-          aria-label="Document type"
-          className="rounded-md border border-slate-200 px-2 py-1.5 text-xs"
+          className="rounded-lg border border-border px-2.5 py-1.5 text-xs text-slate-700"
         >
           <option value="">Auto-detect type</option>
           {DOCUMENT_TYPES.map(([value, label]) => (
@@ -163,8 +189,8 @@ export function DocumentsPanel({
       ) : (
         <ul className="space-y-3">
           {documents.map((doc) => {
-            const fields: Record<string, string> = doc.extraction ? JSON.parse(doc.extraction.fields) : {};
-            const warnings: string[] = doc.extraction ? JSON.parse(doc.extraction.warnings) : [];
+            const fields = safeFields(doc.extraction);
+            const warnings = safeWarnings(doc.extraction);
             const busy = busyId === doc.id;
             return (
               <li key={doc.id} className="rounded-lg border border-slate-100 p-3">
