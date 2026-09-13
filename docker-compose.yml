@@ -1,0 +1,32 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "file:/app/prisma/dev.db"
+      JWT_SECRET: "change-this-in-any-real-deployment"
+      APP_URL: "http://localhost:3000"
+      DEMO_MODE: "true"
+      REFERRAL_ACK_TIMEOUT_MINUTES: "10"
+      AI_PROVIDER: "demo"
+      OCR_PROVIDER: "demo"
+      STORAGE_PROVIDER: "local"
+      EMAIL_PROVIDER: "demo"
+      WHATSAPP_PROVIDER: "demo"
+      SEED_ON_START: "true"
+    volumes:
+      - db-data:/app/prisma
+      - storage-data:/app/storage
+
+# --- Production upgrade path (not wired by default) ---
+# Swap DATABASE_URL to a postgresql:// connection string and change the
+# `provider` in prisma/schema.prisma from "sqlite" to "postgresql" to run
+# against a real Postgres instance (e.g. add a `db: image: postgres:16`
+# service here). Redis and S3-compatible storage would follow the same
+# pattern via REDIS_URL / STORAGE_PROVIDER=s3, once those adapters are
+# implemented (see docs/16_FUTURE_ROADMAP.md).
+
+volumes:
+  db-data:
+  storage-data:
