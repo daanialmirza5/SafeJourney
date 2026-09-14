@@ -9,8 +9,8 @@ import { interpolate, renderNotificationTemplate, NOTIFICATION_TEMPLATE_DEFAULTS
 
 describe("interpolate", () => {
   it("fills in every matching {{placeholder}}", () => {
-    expect(interpolate("Referral {{code}} for {{name}}", { code: "MR-1", name: "Ananya" })).toBe(
-      "Referral MR-1 for Ananya"
+    expect(interpolate("Referral {{code}} for {{name}}", { code: "SJ-1", name: "Ananya" })).toBe(
+      "Referral SJ-1 for Ananya"
     );
   });
 
@@ -24,10 +24,10 @@ describe("renderNotificationTemplate (spec section 56 admin-editable notificatio
     vi.mocked(db.notificationTemplate.findUnique).mockResolvedValueOnce(null);
     const result = await renderNotificationTemplate("REFERRAL_ACCEPTED_DOCTOR", {
       facilityName: "Riverbend Women & Newborn Hospital",
-      referralCode: "MR-2026-1",
+      referralCode: "SJ-2026-1",
     });
     expect(result.title).toBe("Referral accepted");
-    expect(result.body).toBe("Riverbend Women & Newborn Hospital accepted referral MR-2026-1.");
+    expect(result.body).toBe("Riverbend Women & Newborn Hospital accepted referral SJ-2026-1.");
   });
 
   it("prefers an admin-edited title/body when an override row exists", async () => {
@@ -39,9 +39,9 @@ describe("renderNotificationTemplate (spec section 56 admin-editable notificatio
       body: "Custom body for {{referralCode}}",
       updatedAt: new Date(),
     } as never);
-    const result = await renderNotificationTemplate("REFERRAL_ACCEPTED_DOCTOR", { referralCode: "MR-2026-2" });
+    const result = await renderNotificationTemplate("REFERRAL_ACCEPTED_DOCTOR", { referralCode: "SJ-2026-2" });
     expect(result.title).toBe("Custom title");
-    expect(result.body).toBe("Custom body for MR-2026-2");
+    expect(result.body).toBe("Custom body for SJ-2026-2");
   });
 
   it("throws for an unknown template key rather than silently sending blank copy", async () => {

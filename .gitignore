@@ -67,3 +67,10 @@ pnpm-lock.yaml
 /test-results/
 /playwright-report/
 /blob-report/
+
+# presentation & deck generation artifacts
+*.pptx
+*.pdf
+scripts/_deck_screens/
+scripts/_capture_deck_screens.mjs
+scripts/build_deck.py

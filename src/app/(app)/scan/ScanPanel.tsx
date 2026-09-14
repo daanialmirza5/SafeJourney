@@ -237,7 +237,7 @@ export function ScanPanel() {
                   id="manual-ref-code"
                   value={manualCode}
                   onChange={(e) => setManualCode(e.target.value)}
-                  placeholder="e.g. MR-2026-41486"
+                  placeholder="e.g. SJ-2026-41486"
                   className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-mono text-slate-900 outline-none focus:border-brand focus:ring-1 focus:ring-brand uppercase"
                 />
                 <Button type="submit" loading={loading} className="px-4">
@@ -247,11 +247,11 @@ export function ScanPanel() {
             </div>
           </form>
 
-          {/* Quick Demo Lookup Shortcuts */}
+          {/* Quick Lookup Shortcuts */}
           <div className="border-t border-slate-100 pt-4 space-y-2">
             <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Sample Active Cases</p>
             <div className="flex flex-wrap gap-2">
-              {["MR-2026-41486", "MR-2026-43141", "MR-2026-76505"].map((code) => (
+              {["SJ-2026-41486", "SJ-2026-43141", "SJ-2026-76505"].map((code) => (
                 <button
                   key={code}
                   onClick={() => {

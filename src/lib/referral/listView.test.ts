@@ -3,7 +3,7 @@ import { filterReferrals, sortReferrals, summarizeReferralCounts, type ReferralL
 
 function makeReferral(overrides: Partial<ReferralListItemLike> & { id: string }): ReferralListItemLike {
   return {
-    referralCode: `MR-2026-${overrides.id}`,
+    referralCode: `SJ-2026-${overrides.id}`,
     status: "SENT",
     priority: "ROUTINE",
     operationalStatus: "ON_TRACK",
@@ -58,7 +58,7 @@ describe("referral list filters", () => {
 
   it("searches case-insensitively across referral code, patient, and facility name", () => {
     expect(filterReferrals(referrals, { query: "facility c" }).map((r) => r.id)).toEqual(["4"]);
-    expect(filterReferrals(referrals, { query: "mr-2026-2" }).map((r) => r.id)).toEqual(["2"]);
+    expect(filterReferrals(referrals, { query: "sj-2026-2" }).map((r) => r.id)).toEqual(["2"]);
   });
 
   it("combines multiple filters", () => {

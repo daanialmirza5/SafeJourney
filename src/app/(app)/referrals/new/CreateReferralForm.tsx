@@ -25,11 +25,20 @@ interface Facility {
   state: string;
 }
 
+interface PatientOption {
+  id: string;
+  name: string;
+  pseudonym: string;
+  sex: string;
+  user?: { id: string; email: string; phone?: string | null } | null;
+}
+
 export function CreateReferralForm({ facilities }: { facilities: Facility[] }) {
   const router = useRouter();
   const { showToast } = useToast();
 
   const patientNameId = useId();
+  const patientEmailId = useId();
   const sexId = useId();
   const newbornNameId = useId();
   const facilityId = useId();
@@ -38,7 +47,12 @@ export function CreateReferralForm({ facilities }: { facilities: Facility[] }) {
   const adminNotesId = useId();
 
   const [loading, setLoading] = useState(false);
+  const [patientMode, setPatientMode] = useState<"existing" | "new">("new");
+  const [patientsList, setPatientsList] = useState<PatientOption[]>([]);
+  const [selectedPatientId, setSelectedPatientId] = useState("");
+  const [patientSearch, setPatientSearch] = useState("");
   const [patientName, setPatientName] = useState("");
+  const [patientEmail, setPatientEmail] = useState("");
   const [sex, setSex] = useState("Female");
   const [includeNewborn, setIncludeNewborn] = useState(false);
   const [newbornName, setNewbornName] = useState("");
@@ -48,28 +62,75 @@ export function CreateReferralForm({ facilities }: { facilities: Facility[] }) {
   const [doctorNote, setDoctorNote] = useState("");
   const [adminNotes, setAdminNotes] = useState("");
 
+  // Load registered patients for quick selection
+  useState(() => {
+    apiFetch<{ patients: PatientOption[] }>("/api/patients")
+      .then((res) => {
+        if (res?.patients) {
+          setPatientsList(res.patients);
+          if (res.patients.length > 0) {
+            setPatientMode("existing");
+            setSelectedPatientId(res.patients[0].id);
+            setPatientName(res.patients[0].name);
+            setSex(res.patients[0].sex || "Female");
+          }
+        }
+      })
+      .catch(() => {
+        // Fall back to new patient mode if search API is not accessible
+      });
+  });
+
+  function handleSelectExisting(pId: string) {
+    setSelectedPatientId(pId);
+    const p = patientsList.find((item) => item.id === pId);
+    if (p) {
+      setPatientName(p.name);
+      setSex(p.sex || "Female");
+    }
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!patientName.trim() || !receivingFacilityId || !doctorNote.trim()) {
+    if (patientMode === "new" && !patientName.trim()) {
+      showToast("Please enter patient name.", "error");
+      return;
+    }
+    if (patientMode === "existing" && !selectedPatientId) {
+      showToast("Please select a patient.", "error");
+      return;
+    }
+    if (!receivingFacilityId || !doctorNote.trim()) {
       showToast("Please fill in all required fields marked with *", "error");
       return;
     }
 
     setLoading(true);
     try {
+      const payload: Record<string, unknown> = {
+        receivingFacilityId,
+        priority,
+        transportRequired,
+        doctorNote,
+        adminNotes: adminNotes || undefined,
+        includeNewborn: includeNewborn
+          ? { name: newbornName || `Baby of ${patientName.split(" ")[0]}`, sex: "Female" }
+          : undefined,
+      };
+
+      if (patientMode === "existing" && selectedPatientId) {
+        payload.patientId = selectedPatientId;
+      } else {
+        payload.patient = {
+          name: patientName.trim(),
+          sex,
+          email: patientEmail.trim() || undefined,
+        };
+      }
+
       const data = await apiFetch<{ referral: { id: string; referralCode: string } }>("/api/referrals", {
         method: "POST",
-        body: JSON.stringify({
-          patient: { name: patientName, sex },
-          includeNewborn: includeNewborn
-            ? { name: newbornName || `Baby of ${patientName.split(" ")[0]}`, sex: "Female" }
-            : undefined,
-          receivingFacilityId,
-          priority,
-          transportRequired,
-          doctorNote,
-          adminNotes: adminNotes || undefined,
-        }),
+        body: JSON.stringify(payload),
       });
 
       showToast(`Referral ${data.referral.referralCode} created and sent successfully.`);
@@ -79,6 +140,13 @@ export function CreateReferralForm({ facilities }: { facilities: Facility[] }) {
       setLoading(false);
     }
   }
+
+  const filteredPatients = patientsList.filter(
+    (p) =>
+      p.name.toLowerCase().includes(patientSearch.toLowerCase()) ||
+      p.pseudonym.toLowerCase().includes(patientSearch.toLowerCase()) ||
+      (p.user?.email && p.user.email.toLowerCase().includes(patientSearch.toLowerCase()))
+  );
 
   // --- Main Form Render ---
   return (
@@ -94,43 +162,119 @@ export function CreateReferralForm({ facilities }: { facilities: Facility[] }) {
       <form onSubmit={submit} className="space-y-6">
         {/* Section 1: Patient Information */}
         <div className="rounded-xl border border-border bg-white p-5 shadow-2xs space-y-4">
-          <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-            <User className="size-4 text-brand" />
-            <h2 className="text-sm font-bold text-slate-900">1. Patient & Case Identification</h2>
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="flex items-center gap-2">
+              <User className="size-4 text-brand" />
+              <h2 className="text-sm font-bold text-slate-900">1. Patient & Case Identification</h2>
+            </div>
+            {patientsList.length > 0 && (
+              <div className="flex rounded-lg border border-slate-200 bg-slate-100 p-0.5 text-xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setPatientMode("existing")}
+                  className={`rounded-md px-3 py-1 transition-all ${
+                    patientMode === "existing" ? "bg-white text-brand shadow-2xs font-bold" : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  Registered Patient
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPatientMode("new")}
+                  className={`rounded-md px-3 py-1 transition-all ${
+                    patientMode === "new" ? "bg-white text-brand shadow-2xs font-bold" : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  New Patient
+                </button>
+              </div>
+            )}
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor={patientNameId} className="mb-1 block text-xs font-semibold text-slate-700">
-                Patient Full Name <RequiredMark />
-              </label>
-              <input
-                id={patientNameId}
-                data-testid="patient-name"
-                required
-                value={patientName}
-                onChange={(e) => setPatientName(e.target.value)}
-                placeholder="e.g. Pooja Sharma"
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-brand focus:ring-1 focus:ring-brand"
-              />
+          {patientMode === "existing" ? (
+            <div className="space-y-3">
+              {patientsList.length > 3 && (
+                <div>
+                  <input
+                    type="text"
+                    value={patientSearch}
+                    onChange={(e) => setPatientSearch(e.target.value)}
+                    placeholder="Search patients by name, pseudonym or email..."
+                    className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-900 outline-none focus:border-brand focus:bg-white"
+                  />
+                </div>
+              )}
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-slate-700">
+                  Select Patient Record <RequiredMark />
+                </label>
+                <select
+                  data-testid="select-patient"
+                  value={selectedPatientId}
+                  onChange={(e) => handleSelectExisting(e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-brand focus:ring-1 focus:ring-brand font-medium"
+                >
+                  {filteredPatients.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} ({p.pseudonym}) {p.user?.email ? `· ${p.user.email}` : ""}
+                    </option>
+                  ))}
+                </select>
+                <p className="mt-1 text-[11px] text-slate-500">
+                  Linking an existing patient ensures the referral immediately appears in their Patient Portal journey.
+                </p>
+              </div>
             </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label htmlFor={patientNameId} className="mb-1 block text-xs font-semibold text-slate-700">
+                    Patient Full Name <RequiredMark />
+                  </label>
+                  <input
+                    id={patientNameId}
+                    data-testid="patient-name"
+                    required={patientMode === "new"}
+                    value={patientName}
+                    onChange={(e) => setPatientName(e.target.value)}
+                    placeholder="e.g. Pooja Sharma"
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-brand focus:ring-1 focus:ring-brand"
+                  />
+                </div>
 
-            <div>
-              <label htmlFor={sexId} className="mb-1 block text-xs font-semibold text-slate-700">
-                Sex
-              </label>
-              <select
-                id={sexId}
-                value={sex}
-                onChange={(e) => setSex(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-brand focus:ring-1 focus:ring-brand"
-              >
-                <option value="Female">Female</option>
-                <option value="Male">Male</option>
-                <option value="Other">Other</option>
-              </select>
+                <div>
+                  <label htmlFor={sexId} className="mb-1 block text-xs font-semibold text-slate-700">
+                    Sex
+                  </label>
+                  <select
+                    id={sexId}
+                    value={sex}
+                    onChange={(e) => setSex(e.target.value)}
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-brand focus:ring-1 focus:ring-brand"
+                  >
+                    <option value="Female">Female</option>
+                    <option value="Male">Male</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor={patientEmailId} className="mb-1 block text-xs font-semibold text-slate-700">
+                  Patient Portal Email (Optional)
+                </label>
+                <input
+                  id={patientEmailId}
+                  type="email"
+                  value={patientEmail}
+                  onChange={(e) => setPatientEmail(e.target.value)}
+                  placeholder="e.g. pooja.sharma@example.com (links to their patient account if registered)"
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-brand focus:ring-1 focus:ring-brand"
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Newborn Continuity Option */}
           <div className="rounded-lg border border-slate-200 bg-slate-50/60 p-3.5 space-y-2">
