@@ -109,9 +109,6 @@ async function main() {
   const inTransit = await updateTransportProgress(referral.id, coordinator, "IN_TRANSIT");
   console.log(`✓ Progress -> IN_TRANSIT, Status: ${inTransit.status}`);
 
-  const arrivedTransport = await updateTransportProgress(referral.id, coordinator, "ARRIVED");
-  console.log(`✓ Progress -> ARRIVED, Status: ${arrivedTransport.status}\n`);
-
   // 5. Multi-User Step 4: Clinical Reception & Care Confirmation
   console.log(`[STAGE 4: CLINICAL RECEPTION & CARE CONFIRMATION]`);
   const underCare = await confirmArrival(referral.id, coordinator);
@@ -121,15 +118,13 @@ async function main() {
   // 6. Multi-User Step 5: Discharge & Back-Referral Generation
   console.log(`[STAGE 5: DISCHARGE & BACK-REFERRAL]`);
   const discharged = await dischargeCase(referral.id, coordinator, {
-    dischargeDestination: "Home under community care",
+    destination: "Home under community care",
   });
   console.log(`✓ Case Discharged, Status: ${discharged.status}`);
   console.log(`✓ Discharge Destination: ${discharged.dischargeDestination}`);
 
   const backReferred = await generateAndSendBackReferral(referral.id, coordinator, {
     dischargeSummary: "Patient managed with antihypertensive protocol. BP stabilized at 120/80. Fetal vitals normal. Prescribed oral labetalol.",
-    pendingAdminItems: "Maternity benefit form submission to Sub-Centre",
-    documentPackage: "Discharge summary, prescription slip, antenatal card copy",
   });
   console.log(`✓ Back-Referral Generated, Status: ${backReferred.status}`);
   console.log(`✓ Back-Referral ID: ${backReferred.backReferral?.id}`);

@@ -7,13 +7,16 @@ export default async function LoginPage() {
   if (user) redirect("/dashboard");
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-10">
-      <div className="mb-8 text-center">
-        <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-xl bg-brand text-lg font-bold text-white">S</div>
-        <h1 className="text-2xl font-semibold text-slate-900">SafeJourney</h1>
-        <p className="mt-1 text-sm text-slate-500">Don&apos;t let a referral end with a piece of paper.</p>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50/50 px-4 py-12">
+      <div className="mb-6 text-center">
+        <div className="mx-auto mb-3 flex size-12 items-center justify-center rounded-2xl bg-brand text-xl font-bold text-white shadow-xs">
+          SJ
+        </div>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">SafeJourney</h1>
+        <p className="mt-1 text-xs font-medium text-slate-500">Your coordinated referral workspace</p>
       </div>
       <LoginForm />
     </div>
   );
 }
+
