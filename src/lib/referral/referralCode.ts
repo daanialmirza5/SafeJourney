@@ -1,8 +1,8 @@
-/** Generates human-readable referral codes like MR-2026-10482 (spec section 8). */
+/** Generates human-readable referral codes like SJ-2026-10482 (spec section 8). */
 export function generateReferralCode(now: Date = new Date()): string {
   const year = now.getFullYear();
   const sequence = Math.floor(10000 + Math.random() * 89999);
-  return `MR-${year}-${sequence}`;
+  return `SJ-${year}-${sequence}`;
 }
 
 /** Generates an opaque passport token for QR / secure lookup. Never encodes

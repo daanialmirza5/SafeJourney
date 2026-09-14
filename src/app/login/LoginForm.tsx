@@ -70,10 +70,18 @@ const EVALUATION_PERSONAS = [
 
 export function LoginForm() {
   const router = useRouter();
+  const nameId = useId();
   const emailId = useId();
   const passwordId = useId();
+  const phoneId = useId();
+  const roleId = useId();
+
+  const [authMode, setAuthMode] = useState<"login" | "register">("login");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+  const [role, setRole] = useState("PATIENT");
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [showEvaluation, setShowEvaluation] = useState(true);
@@ -95,6 +103,33 @@ export function LoginForm() {
     }
   }
 
+  async function register() {
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      setError("Please fill in all required fields.");
+      return;
+    }
+    setLoading("register");
+    setError(null);
+    try {
+      await apiFetch("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify({
+          name: name.trim(),
+          email: email.trim().toLowerCase(),
+          password,
+          role,
+          phone: phone.trim() || undefined,
+        }),
+      });
+      router.push("/dashboard");
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Registration failed. Please try again.");
+    } finally {
+      setLoading(null);
+    }
+  }
+
   function fillCredentials(fillEmail: string) {
     setEmail(fillEmail);
     setPassword(DEMO_PASSWORD);
@@ -102,70 +137,205 @@ export function LoginForm() {
 
   return (
     <div className="w-full max-w-2xl mx-auto space-y-6">
-      {/* Primary Clean Sign In Card */}
+      {/* Primary Clean Auth Card */}
       <div className="rounded-2xl border border-slate-200/90 bg-white p-6 md:p-8 shadow-xs space-y-6">
+        {/* Auth Mode Tabs */}
+        <div className="flex justify-center">
+          <div className="inline-flex rounded-xl border border-slate-200 bg-slate-100 p-1 text-xs font-semibold">
+            <button
+              type="button"
+              onClick={() => {
+                setAuthMode("login");
+                setError(null);
+              }}
+              className={`rounded-lg px-5 py-1.5 transition-all ${
+                authMode === "login" ? "bg-white text-brand shadow-xs font-bold" : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setAuthMode("register");
+                setError(null);
+              }}
+              className={`rounded-lg px-5 py-1.5 transition-all ${
+                authMode === "register" ? "bg-white text-brand shadow-xs font-bold" : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Create Account
+            </button>
+          </div>
+        </div>
+
         <div className="text-center space-y-1.5">
           <div className="inline-flex items-center gap-1.5 rounded-full border border-brand/20 bg-brand-soft px-3 py-1 text-xs font-semibold text-brand-dark">
             <span>SafeJourney Platform</span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-            Sign In to SafeJourney
+            {authMode === "login" ? "Sign In to SafeJourney" : "Create SafeJourney Account"}
           </h1>
           <p className="text-xs text-slate-500 max-w-md mx-auto">
-            Enter your credentials to access your facility referral coordination workspace.
+            {authMode === "login"
+              ? "Enter your credentials to access your referral coordination workspace."
+              : "Register a patient or clinical coordinator account to track referral journeys."}
           </p>
         </div>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            login(email, password, "form");
-          }}
-          className="space-y-4"
-        >
-          <div>
-            <label htmlFor={emailId} className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-              <Mail className="size-3.5 text-slate-400" />
-              Email Address
-            </label>
-            <input
-              id={emailId}
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand/15 placeholder:text-slate-400"
-              placeholder="name@facility.org"
-            />
-          </div>
-
-          <div>
-            <label htmlFor={passwordId} className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-              <Lock className="size-3.5 text-slate-400" />
-              Password
-            </label>
-            <input
-              id={passwordId}
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand/15 placeholder:text-slate-400"
-              placeholder="••••••••"
-            />
-          </div>
-
-          {error && (
-            <div role="alert" className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50/80 p-3.5 text-xs text-rose-800">
-              <ShieldAlert className="size-4 shrink-0 text-rose-600 mt-0.5" />
-              <span>{error}</span>
+        {authMode === "login" ? (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              login(email, password, "form");
+            }}
+            className="space-y-4"
+          >
+            <div>
+              <label htmlFor={emailId} className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                <Mail className="size-3.5 text-slate-400" />
+                Email Address
+              </label>
+              <input
+                id={emailId}
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand/15 placeholder:text-slate-400"
+                placeholder="name@facility.org"
+              />
             </div>
-          )}
 
-          <Button type="submit" loading={loading === "form"} className="w-full py-3 text-sm font-semibold rounded-xl">
-            Sign In to Workplace
-          </Button>
-        </form>
+            <div>
+              <label htmlFor={passwordId} className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                <Lock className="size-3.5 text-slate-400" />
+                Password
+              </label>
+              <input
+                id={passwordId}
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand/15 placeholder:text-slate-400"
+                placeholder="••••••••"
+              />
+            </div>
+
+            {error && (
+              <div role="alert" className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50/80 p-3.5 text-xs text-rose-800">
+                <ShieldAlert className="size-4 shrink-0 text-rose-600 mt-0.5" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <Button type="submit" loading={loading === "form"} className="w-full py-3 text-sm font-semibold rounded-xl">
+              Sign In to Workplace
+            </Button>
+          </form>
+        ) : (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              register();
+            }}
+            className="space-y-4"
+          >
+            <div>
+              <label htmlFor={nameId} className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                <Users className="size-3.5 text-slate-400" />
+                Full Name
+              </label>
+              <input
+                id={nameId}
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand/15 placeholder:text-slate-400"
+                placeholder="e.g. Ananya Patil"
+              />
+            </div>
+
+            <div>
+              <label htmlFor={emailId} className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                <Mail className="size-3.5 text-slate-400" />
+                Email Address
+              </label>
+              <input
+                id={emailId}
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand/15 placeholder:text-slate-400"
+                placeholder="patient@example.com"
+              />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor={passwordId} className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <Lock className="size-3.5 text-slate-400" />
+                  Password
+                </label>
+                <input
+                  id={passwordId}
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand/15 placeholder:text-slate-400"
+                  placeholder="At least 6 characters"
+                />
+              </div>
+
+              <div>
+                <label htmlFor={roleId} className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <ShieldCheck className="size-3.5 text-slate-400" />
+                  Account Role
+                </label>
+                <select
+                  id={roleId}
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand/15"
+                >
+                  <option value="PATIENT">Patient (Family / Individual)</option>
+                  <option value="DOCTOR">Doctor (Referring Clinician)</option>
+                  <option value="COORDINATOR">Intake Coordinator</option>
+                  <option value="FOLLOWUP">Community Health Worker (ASHA)</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor={phoneId} className="mb-1.5 block text-xs font-semibold text-slate-700">
+                Phone Number (Optional)
+              </label>
+              <input
+                id={phoneId}
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand/15 placeholder:text-slate-400"
+                placeholder="+91 98765 43210"
+              />
+            </div>
+
+            {error && (
+              <div role="alert" className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50/80 p-3.5 text-xs text-rose-800">
+                <ShieldAlert className="size-4 shrink-0 text-rose-600 mt-0.5" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            <Button type="submit" loading={loading === "register"} className="w-full py-3 text-sm font-semibold rounded-xl">
+              Create SafeJourney Account
+            </Button>
+          </form>
+        )}
       </div>
 
       {/* Collapsible Evaluation & Testing Access */}

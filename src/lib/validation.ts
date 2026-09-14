@@ -1,11 +1,16 @@
 import { z } from "zod";
 
 export const createReferralSchema = z.object({
-  patient: z.object({
-    name: z.string().min(1).max(200),
-    sex: z.enum(["Female", "Male", "Other"]),
-    dateOfBirth: z.string().optional(),
-  }),
+  patientId: z.string().optional(),
+  patient: z
+    .object({
+      name: z.string().min(1).max(200),
+      sex: z.enum(["Female", "Male", "Other"]).default("Female"),
+      dateOfBirth: z.string().optional(),
+      email: z.string().email().optional(),
+      phone: z.string().optional(),
+    })
+    .optional(),
   includeNewborn: z
     .object({
       name: z.string().min(1).max(200),
@@ -18,6 +23,18 @@ export const createReferralSchema = z.object({
   transportRequired: z.boolean(),
   doctorNote: z.string().min(1).max(4000),
   adminNotes: z.string().max(4000).optional(),
+}).refine((data) => data.patientId || data.patient, {
+  message: "Either patientId or patient details must be provided.",
+});
+
+export const registerSchema = z.object({
+  name: z.string().min(1).max(200),
+  email: z.string().email(),
+  password: z.string().min(6).max(100),
+  role: z.enum(["PATIENT", "DOCTOR", "COORDINATOR", "CAREGIVER", "FOLLOWUP", "ADMIN"]).default("PATIENT"),
+  language: z.string().min(2).max(10).default("en"),
+  phone: z.string().max(20).optional(),
+  facilityId: z.string().optional(),
 });
 
 export const clarificationSchema = z.object({ note: z.string().min(1).max(1000) });

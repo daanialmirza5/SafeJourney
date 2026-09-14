@@ -35,12 +35,12 @@ test("patient cannot open a referral they have no relationship to", async ({ bro
   // Diffing the two gives us a real referral id this patient has no
   // relationship to, without hard-coding any seed data.
   const { context: patientContext } = await loginAs(browser, DEMO_USER_EMAILS.patient);
-  const ownResults = (await (await patientContext.request.get("/api/search?q=MR-2")).json()).results as { id: string }[];
+  const ownResults = (await (await patientContext.request.get("/api/search?q=2026")).json()).results as { id: string }[];
   expect(ownResults.length).toBeGreaterThan(0);
   const ownIds = new Set(ownResults.map((r) => r.id));
 
   const { context: adminContext } = await loginAs(browser, DEMO_USER_EMAILS.admin);
-  const allResults = (await (await adminContext.request.get("/api/search?q=MR-2")).json()).results as { id: string }[];
+  const allResults = (await (await adminContext.request.get("/api/search?q=2026")).json()).results as { id: string }[];
   const someOtherReferralId = allResults.find((r) => !ownIds.has(r.id))?.id;
   expect(someOtherReferralId, "expected at least one seeded referral outside the patient's own scope").toBeTruthy();
 

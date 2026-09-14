@@ -7,9 +7,8 @@ import { decorateOperationalStatus } from "@/lib/referral/decorate";
 import { getAckTimeoutMinutes } from "@/lib/config";
 import { STATUS_LABELS } from "@/lib/referral/stateMachine";
 import { formatDuration, formatDateTime } from "@/lib/format";
-import { StatusBadge, PriorityBadge } from "@/components/ui/Badge";
+import { CaseJourneyHero } from "@/components/referral/CaseJourneyHero";
 import { Card, CardHeader, CardBody } from "@/components/ui/Card";
-import { PageHeader } from "@/components/ui/EmptyState";
 import { PatientJourney } from "@/components/referral/PatientJourney";
 import { PassportCard } from "@/components/referral/PassportCard";
 import { ReferralTimeline } from "@/components/referral/ReferralTimeline";
@@ -44,22 +43,17 @@ export default async function ReferralDetailPage({ params }: { params: { id: str
   const followUpWorkers = await db.user.findMany({ where: { role: "FOLLOWUP" }, select: { id: true, name: true } });
 
   const isPatientFacing = role === "PATIENT" || role === "CAREGIVER";
-  // Mirrors the confirm/reject API's own requireRole -- FOLLOWUP is not
-  // patient-facing but also isn't staff authorized to make document
-  // completeness decisions, so it can't just reuse !isPatientFacing here.
   const canReviewDocuments = role === "DOCTOR" || role === "COORDINATOR" || role === "ADMIN";
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title={referral.referralCode}
-        description={`${referral.patient.pseudonym} · ${referral.referringFacility.name} → ${referral.receivingFacility.name}`}
-        action={
-          <div className="flex flex-wrap gap-2">
-            <PriorityBadge priority={referral.priority} />
-            <StatusBadge status={decorated.operationalStatus} />
-          </div>
-        }
+      {/* Central Case Hero Summary & Next Action */}
+      <CaseJourneyHero
+        referral={decorated}
+        currentRole={role}
+        isReferringFacility={isReferringFacility}
+        isReceivingFacility={isReceivingFacility}
+        userId={user.id}
       />
 
       {decorated.operationalStatus === "STUCK" && (

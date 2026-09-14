@@ -62,7 +62,8 @@ async function findReceivingCoordinators(facilityId: string) {
 
 export interface CreateReferralInput {
   doctor: User;
-  patient: { name: string; sex: string; dateOfBirth?: string };
+  patientId?: string;
+  patient?: { name: string; sex: string; dateOfBirth?: string; email?: string; phone?: string };
   includeNewborn?: { name: string; sex?: string; birthDate?: string };
   receivingFacilityId: string;
   priority: "ROUTINE" | "URGENT" | "EMERGENCY";
@@ -78,22 +79,40 @@ export async function createReferral(input: CreateReferralInput) {
   const receivingFacility = await db.facility.findUnique({ where: { id: input.receivingFacilityId } });
   if (!receivingFacility) throw new NotFoundError("Receiving facility not found.");
 
-  const pseudonymSeq = Math.floor(1000 + Math.random() * 8999);
-
   const referral = await db.$transaction(async (tx) => {
-    const patient = await tx.patient.create({
-      data: {
-        pseudonym: `Patient-${pseudonymSeq}`,
-        name: input.patient.name,
-        sex: input.patient.sex,
-        dateOfBirth: input.patient.dateOfBirth ? new Date(input.patient.dateOfBirth) : null,
-        facilityId: input.doctor.facilityId!,
-        createdById: input.doctor.id,
-      },
-    });
+    let resolvedPatientId = input.patientId;
+
+    if (!resolvedPatientId) {
+      if (!input.patient) {
+        throw new ConflictError("Either patientId or patient details must be provided.");
+      }
+
+      let matchedUserId: string | null = null;
+      if (input.patient.email) {
+        const userMatch = await tx.user.findUnique({ where: { email: input.patient.email.toLowerCase().trim() } });
+        if (userMatch) matchedUserId = userMatch.id;
+      }
+
+      const pseudonymSeq = Math.floor(1000 + Math.random() * 8999);
+      const patient = await tx.patient.create({
+        data: {
+          userId: matchedUserId,
+          pseudonym: `Patient-${pseudonymSeq}`,
+          name: input.patient.name,
+          sex: input.patient.sex || "Female",
+          dateOfBirth: input.patient.dateOfBirth ? new Date(input.patient.dateOfBirth) : null,
+          facilityId: input.doctor.facilityId!,
+          createdById: input.doctor.id,
+        },
+      });
+      resolvedPatientId = patient.id;
+    } else {
+      const existingPatient = await tx.patient.findUnique({ where: { id: resolvedPatientId } });
+      if (!existingPatient) throw new NotFoundError("Selected patient not found.");
+    }
 
     if (input.includeNewborn) {
-      const familyCase = await tx.familyCase.create({ data: { patientId: patient.id } });
+      const familyCase = await tx.familyCase.create({ data: { patientId: resolvedPatientId } });
       await tx.motherCase.create({ data: { familyCaseId: familyCase.id } });
       await tx.newbornCase.create({
         data: {
@@ -110,7 +129,7 @@ export async function createReferral(input: CreateReferralInput) {
       data: {
         referralCode: generateReferralCode(now),
         passportToken: generatePassportToken(),
-        patientId: patient.id,
+        patientId: resolvedPatientId,
         referringFacilityId: input.doctor.facilityId!,
         receivingFacilityId: input.receivingFacilityId,
         referringDoctorId: input.doctor.id,

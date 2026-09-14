@@ -57,7 +57,7 @@ test("deactivating a user blocks login immediately, and reactivating restores it
 
   // Create a fresh caregiver account via the patient's own "add caregiver" flow.
   const { context: patientContext } = await loginAs(browser, DEMO_USER_EMAILS.patient);
-  const ownResults = (await (await patientContext.request.get("/api/search?q=MR-2")).json()).results as { id: string }[];
+  const ownResults = (await (await patientContext.request.get("/api/search?q=2026")).json()).results as { id: string }[];
   const referral = await (await patientContext.request.get(`/api/referrals/${ownResults[0].id}`)).json();
   const patientId = referral.referral.patientId;
   await patientContext.request.post(`/api/patients/${patientId}/caregivers`, {
