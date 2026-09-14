@@ -16,10 +16,10 @@ export function DemoToolsPanel({ showReset = false }: { showReset?: boolean }) {
     setLoading("judge");
     try {
       const data = await apiFetch<{ referral: { id: string } }>("/api/demo/judge-scenario", { method: "POST" });
-      showToast("Judge demo referral created -- ready to walk through.");
+      showToast("Sample referral case created -- ready to walk through.");
       router.push(`/referrals/${data.referral.id}`);
     } catch (err) {
-      showToast(err instanceof Error ? err.message : "Failed to launch demo.", "error");
+      showToast(err instanceof Error ? err.message : "Failed to generate sample referral.", "error");
     } finally {
       setLoading(null);
     }
@@ -29,24 +29,24 @@ export function DemoToolsPanel({ showReset = false }: { showReset?: boolean }) {
     setLoading("rescue");
     try {
       const data = await apiFetch<{ referral: { id: string } }>("/api/demo/rescue-scenario", { method: "POST" });
-      showToast("Rescue scenario created -- this referral is already STUCK.");
+      showToast("Escalation scenario created -- case is marked STUCK due to SLA breach.");
       router.push(`/referrals/${data.referral.id}`);
     } catch (err) {
-      showToast(err instanceof Error ? err.message : "Failed to launch rescue demo.", "error");
+      showToast(err instanceof Error ? err.message : "Failed to generate escalation scenario.", "error");
     } finally {
       setLoading(null);
     }
   }
 
   async function resetDemo() {
-    if (!confirm("This will wipe and regenerate all demo data. Continue?")) return;
+    if (!confirm("This will regenerate all sample evaluation data. Continue?")) return;
     setLoading("reset");
     try {
       await apiFetch("/api/demo/reset", { method: "POST" });
-      showToast("Demo data has been reset.");
+      showToast("Evaluation sample data has been reset.");
       router.refresh();
     } catch (err) {
-      showToast(err instanceof Error ? err.message : "Failed to reset demo data.", "error");
+      showToast(err instanceof Error ? err.message : "Failed to reset evaluation data.", "error");
     } finally {
       setLoading(null);
     }
@@ -55,14 +55,14 @@ export function DemoToolsPanel({ showReset = false }: { showReset?: boolean }) {
   return (
     <div className="flex flex-wrap gap-2">
       <Button variant="secondary" size="sm" loading={loading === "judge"} onClick={launchJudgeDemo}>
-        <Sparkles className="size-3.5" /> Launch Judge Demo
+        <Sparkles className="size-3.5 text-brand" /> Generate Sample Referral
       </Button>
       <Button variant="secondary" size="sm" loading={loading === "rescue"} onClick={launchRescueDemo}>
-        <AlertOctagon className="size-3.5" /> Demo Rescue Scenario
+        <AlertOctagon className="size-3.5 text-amber-600" /> Simulate SLA Escalation
       </Button>
       {showReset && (
         <Button variant="ghost" size="sm" loading={loading === "reset"} onClick={resetDemo}>
-          <RotateCcw className="size-3.5" /> Reset demo data
+          <RotateCcw className="size-3.5 text-slate-500" /> Reset evaluation data
         </Button>
       )}
     </div>

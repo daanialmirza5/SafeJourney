@@ -23,11 +23,11 @@ describe("renderNotificationTemplate (spec section 56 admin-editable notificatio
   it("uses the compiled-in default, interpolated, when no admin override exists", async () => {
     vi.mocked(db.notificationTemplate.findUnique).mockResolvedValueOnce(null);
     const result = await renderNotificationTemplate("REFERRAL_ACCEPTED_DOCTOR", {
-      facilityName: "Metro Maternal Demo Hospital",
+      facilityName: "Riverbend Women & Newborn Hospital",
       referralCode: "MR-2026-1",
     });
     expect(result.title).toBe("Referral accepted");
-    expect(result.body).toBe("Metro Maternal Demo Hospital accepted referral MR-2026-1.");
+    expect(result.body).toBe("Riverbend Women & Newborn Hospital accepted referral MR-2026-1.");
   });
 
   it("prefers an admin-edited title/body when an override row exists", async () => {

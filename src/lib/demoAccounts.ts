@@ -1,13 +1,11 @@
-/** Client-safe constants (no Prisma import) so login UI can reference the
- * fixed demo accounts without pulling server-only code into the browser
- * bundle. Server code should prefer importing these via @/lib/config. */
+/** Evaluation accounts (client-safe constants) */
 export const DEMO_USER_EMAILS = {
-  doctor: "doctor@demo.local",
-  coordinator: "coordinator@demo.local",
-  patient: "patient@demo.local",
-  caregiver: "caregiver@demo.local",
-  worker: "worker@demo.local",
-  admin: "admin@demo.local",
+  doctor: "doctor@safejourney.local",
+  coordinator: "coordinator@safejourney.local",
+  patient: "patient@safejourney.local",
+  caregiver: "caregiver@safejourney.local",
+  worker: "asha@safejourney.local",
+  admin: "admin@safejourney.local",
 } as const;
 
-export const DEMO_PASSWORD = "demo1234";
+export const DEMO_PASSWORD = "safejourney2026";

@@ -34,7 +34,7 @@ test.describe.serial("closed-loop referral journey", () => {
     await page.getByTestId("patient-name").fill("Ananya E2E Patil");
     await page
       .getByTestId("receiving-facility")
-      .selectOption({ label: "Metro Maternal Demo Hospital (Mumbai, Maharashtra)" });
+      .selectOption({ label: "Riverbend Women & Newborn Hospital (Mumbai, Maharashtra)" });
     await page.getByTestId("transport-required").check();
     await page.getByTestId("doctor-note").fill("E2E test referral -- administrative note only, no clinical content.");
     await page.getByTestId("submit-referral").click();
