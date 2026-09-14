@@ -47,8 +47,8 @@ async function findDemoDoctor(): Promise<User> {
  * at all. */
 export async function launchJudgeDemoScenario() {
   const doctor = await findDemoDoctor();
-  const receivingFacility = await db.facility.findFirst({ where: { name: "Metro Maternal Demo Hospital" } });
-  if (!receivingFacility) throw new NotFoundError("Demo receiving facility not found. Reset demo data first.");
+  const receivingFacility = await db.facility.findFirst({ where: { name: "Riverbend Women & Newborn Hospital" } });
+  if (!receivingFacility) throw new NotFoundError("Receiving facility not found. Reset evaluation data first.");
 
   const referral = await createReferral({
     doctor,
@@ -57,7 +57,7 @@ export async function launchJudgeDemoScenario() {
     receivingFacilityId: receivingFacility.id,
     priority: "URGENT",
     transportRequired: true,
-    doctorNote: "Referred for specialist maternal care and delivery support. (Judge demo scenario.)",
+    doctorNote: "Referred for specialist maternal care and institutional delivery support. (Evaluation case.)",
     adminNotes: "Family carrying identity documents and prior antenatal records.",
   });
 
@@ -87,8 +87,8 @@ export async function launchJudgeDemoScenario() {
  * right away. */
 export async function launchRescueScenario() {
   const doctor = await findDemoDoctor();
-  const receivingFacility = await db.facility.findFirst({ where: { name: "Central Demo Referral Hospital" } });
-  if (!receivingFacility) throw new NotFoundError("Demo receiving facility not found. Reset demo data first.");
+  const receivingFacility = await db.facility.findFirst({ where: { name: "Central Maternal Referral Hospital" } });
+  if (!receivingFacility) throw new NotFoundError("Receiving facility not found. Reset evaluation data first.");
 
   const referral = await createReferral({
     doctor,
@@ -97,7 +97,7 @@ export async function launchRescueScenario() {
     receivingFacilityId: receivingFacility.id,
     priority: "EMERGENCY",
     transportRequired: false,
-    doctorNote: "Urgent referral requiring prompt acknowledgement. (Rescue demo scenario.)",
+    doctorNote: "Urgent transfer requiring prompt acknowledgement and intake triage. (Escalation evaluation case.)",
     adminNotes: undefined,
   });
 

@@ -42,16 +42,16 @@ function daysAgo(n: number): Date {
 }
 
 const FACILITIES = [
-  { name: "Sahyadri Demo Women & Child Centre", type: "REFERRING", district: "Pune", state: "Maharashtra" },
-  { name: "Metro Maternal Demo Hospital", type: "RECEIVING", district: "Mumbai", state: "Maharashtra" },
-  { name: "District Women's Care Centre Demo", type: "BOTH", district: "Nashik", state: "Maharashtra" },
-  { name: "Riverside Demo Community Health Centre", type: "REFERRING", district: "Nagpur", state: "Maharashtra" },
-  { name: "Sunrise Demo Maternity Hospital", type: "RECEIVING", district: "Bengaluru Urban", state: "Karnataka" },
-  { name: "Lakeview Demo District Hospital", type: "BOTH", district: "Mysuru", state: "Karnataka" },
-  { name: "Green Valley Demo Primary Health Centre", type: "REFERRING", district: "Belagavi", state: "Karnataka" },
-  { name: "Central Demo Referral Hospital", type: "RECEIVING", district: "Pune", state: "Maharashtra" },
-  { name: "Hillside Demo Rural Health Centre", type: "REFERRING", district: "Satara", state: "Maharashtra" },
-  { name: "Unity Demo Medical College Hospital", type: "RECEIVING", district: "Bengaluru Urban", state: "Karnataka" },
+  { name: "Sunrise Community Health Centre", type: "REFERRING", district: "Pune", state: "Maharashtra" },
+  { name: "Riverbend Women & Newborn Hospital", type: "RECEIVING", district: "Mumbai", state: "Maharashtra" },
+  { name: "District Women's Care Centre", type: "BOTH", district: "Nashik", state: "Maharashtra" },
+  { name: "Riverside Community Health Centre", type: "REFERRING", district: "Nagpur", state: "Maharashtra" },
+  { name: "Lakeside Maternity Care Hospital", type: "RECEIVING", district: "Bengaluru Urban", state: "Karnataka" },
+  { name: "Lakeview District Hospital", type: "BOTH", district: "Mysuru", state: "Karnataka" },
+  { name: "Green Valley Primary Health Centre", type: "REFERRING", district: "Belagavi", state: "Karnataka" },
+  { name: "Central Maternal Referral Hospital", type: "RECEIVING", district: "Pune", state: "Maharashtra" },
+  { name: "Hillside Rural Health Centre", type: "REFERRING", district: "Satara", state: "Maharashtra" },
+  { name: "Unity Medical College Hospital", type: "RECEIVING", district: "Bengaluru Urban", state: "Karnataka" },
 ] as const;
 
 const DOCTOR_NAMES = [
@@ -154,20 +154,16 @@ async function seedStaff(facilities: Awaited<ReturnType<typeof seedFacilities>>)
 
 async function seedNamedDemoAccounts(facilities: Awaited<ReturnType<typeof seedFacilities>>) {
   const passwordHash = await hashPassword(DEMO_PASSWORD);
-  const referringFacility = facilities.find((f) => f.name === "Sahyadri Demo Women & Child Centre")!;
-  const receivingFacility = facilities.find((f) => f.name === "Metro Maternal Demo Hospital")!;
-  // The fixed demo accounts skip the first-time onboarding wizard (spec
-  // section 58) so the standard judge/demo walkthrough isn't interrupted --
-  // a caregiver added via "Add caregiver" during the demo gets a fresh
-  // account with onboardedAt left null, so the wizard is still fully live
-  // and demonstrable on that path.
+  const referringFacility = facilities.find((f) => f.name === "Sunrise Community Health Centre")!;
+  const receivingFacility = facilities.find((f) => f.name === "Riverbend Women & Newborn Hospital")!;
+  // The fixed evaluation accounts skip the first-time onboarding wizard
   const onboardedAt = new Date();
 
   const doctor = await db.user.create({
-    data: { email: DEMO_USER_EMAILS.doctor, name: "Dr. Ananya Rao", role: "DOCTOR", passwordHash, facilityId: referringFacility.id, onboardedAt },
+    data: { email: DEMO_USER_EMAILS.doctor, name: "Dr. Meera Kulkarni", role: "DOCTOR", passwordHash, facilityId: referringFacility.id, onboardedAt },
   });
   const coordinator = await db.user.create({
-    data: { email: DEMO_USER_EMAILS.coordinator, name: "Suresh Patil", role: "COORDINATOR", passwordHash, facilityId: receivingFacility.id, onboardedAt },
+    data: { email: DEMO_USER_EMAILS.coordinator, name: "Arjun Deshmukh", role: "COORDINATOR", passwordHash, facilityId: receivingFacility.id, onboardedAt },
   });
   const patientUser = await db.user.create({
     data: { email: DEMO_USER_EMAILS.patient, name: "Ananya Patil", role: "PATIENT", passwordHash, onboardedAt },
@@ -176,10 +172,10 @@ async function seedNamedDemoAccounts(facilities: Awaited<ReturnType<typeof seedF
     data: { email: DEMO_USER_EMAILS.caregiver, name: "Rakesh Patil", role: "CAREGIVER", passwordHash, onboardedAt },
   });
   const worker = await db.user.create({
-    data: { email: DEMO_USER_EMAILS.worker, name: "Sangeeta ASHA Worker", role: "FOLLOWUP", passwordHash, onboardedAt },
+    data: { email: DEMO_USER_EMAILS.worker, name: "Meera Bai (ASHA)", role: "FOLLOWUP", passwordHash, onboardedAt },
   });
   const admin = await db.user.create({
-    data: { email: DEMO_USER_EMAILS.admin, name: "Demo Admin", role: "ADMIN", passwordHash, onboardedAt },
+    data: { email: DEMO_USER_EMAILS.admin, name: "District Health Admin", role: "ADMIN", passwordHash, onboardedAt },
   });
 
   return { doctor, coordinator, patientUser, caregiverUser, worker, admin, referringFacility, receivingFacility };

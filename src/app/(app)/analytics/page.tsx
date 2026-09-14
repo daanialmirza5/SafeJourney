@@ -30,12 +30,12 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: { 
   if (data.totalInitiated === 0) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Analytics" description="Synthetic demo data -- operational KPIs for the closed-loop referral journey." />
+        <PageHeader title="Analytics" description="Operational KPIs and closed-loop coordination metrics across facilities." />
         <DateRangeFilter from={searchParams.from} to={searchParams.to} />
         <EmptyState
           icon={<BarChart3 className="size-8" />}
           title={searchParams.from || searchParams.to ? "No referrals in this date range" : "No referrals in scope yet"}
-          description="KPIs will appear here once a referral is created. Try Launch Judge Demo from the doctor dashboard, or reset demo data from the admin panel."
+          description="KPIs will appear here once referrals are initiated and processed across your network."
         />
       </div>
     );
@@ -43,7 +43,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: { 
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Analytics" description="Synthetic demo data -- operational KPIs for the closed-loop referral journey." />
+      <PageHeader title="Analytics" description="Operational KPIs and closed-loop coordination metrics across facilities." />
       <DateRangeFilter from={searchParams.from} to={searchParams.to} />
 
       <Card className="border-brand">

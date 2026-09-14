@@ -2,56 +2,69 @@
 
 import { useId, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Stethoscope, Building2, Users, ShieldCheck, HeartPulse, ArrowRight, Lock, Mail } from "lucide-react";
+import {
+  Stethoscope,
+  Building2,
+  Users,
+  ShieldCheck,
+  HeartPulse,
+  Lock,
+  Mail,
+  ChevronDown,
+  ChevronUp,
+  Sparkles,
+  ArrowRight,
+  ShieldAlert,
+} from "lucide-react";
 import { apiFetch } from "@/lib/clientApi";
 import { DEMO_USER_EMAILS, DEMO_PASSWORD } from "@/lib/demoAccounts";
 import { Button } from "@/components/ui/Button";
 
-const WORKPLACE_PERSONAS = [
+const EVALUATION_PERSONAS = [
   {
-    role: "Referring Clinic Staff",
-    name: "Dr. Ananya Rao",
-    facility: "Hillside Demo PHC",
+    role: "Referring Clinic Doctor",
+    name: "Dr. Meera Kulkarni",
+    facility: "Sunrise Community Health Centre",
     email: DEMO_USER_EMAILS.doctor,
     icon: Stethoscope,
     badgeColor: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    description: "Initiate maternal/newborn transfers, attach records, track outbound cases.",
+    description: "Initiate maternal & newborn referrals, upload clinical records, track outbound cases.",
   },
   {
-    role: "Receiving Hospital Staff",
-    name: "Suresh Patil",
-    facility: "Metro Maternal Hospital",
+    role: "Hospital Intake Coordinator",
+    name: "Arjun Deshmukh",
+    facility: "Riverbend Women & Newborn Hospital",
     email: DEMO_USER_EMAILS.coordinator,
     icon: Building2,
     badgeColor: "bg-blue-50 text-blue-700 border-blue-200",
-    description: "Triage inbound referrals, manage emergency transport, record arrival & discharge.",
+    description: "Acknowledge inbound cases, coordinate emergency transport, record arrival & discharge.",
   },
   {
-    role: "Community Health Worker",
-    name: "Sunita Devi (ASHA)",
-    facility: "Hillside Catchment Area",
+    role: "Community Health Worker (ASHA)",
+    name: "Meera Bai",
+    facility: "Asha Community Care Team",
     email: DEMO_USER_EMAILS.worker,
     icon: Users,
     badgeColor: "bg-amber-50 text-amber-700 border-amber-200",
-    description: "Execute postpartum home visits, newborn immunization and growth check-ins.",
+    description: "Manage postpartum home visits, newborn immunization and growth check-ins.",
   },
   {
     role: "System Administrator",
     name: "District Health Admin",
-    facility: "District Coordination Cell",
+    facility: "District Maternal Coordination Cell",
     email: DEMO_USER_EMAILS.admin,
     icon: ShieldCheck,
     badgeColor: "bg-purple-50 text-purple-700 border-purple-200",
-    description: "Manage facilities, users, benefit rules, notification templates, and audit logs.",
+    description: "Manage facilities, users, scheme rules, notification templates, and audit logs.",
   },
   {
-    role: "Patient & Family Portal",
+    role: "Patient Portal",
     name: "Ananya Patil",
-    facility: "Patient View",
+    facility: "Patient & Family View",
     email: DEMO_USER_EMAILS.patient,
     icon: HeartPulse,
     badgeColor: "bg-teal-50 text-teal-700 border-teal-200",
-    description: "Access plain-language journey updates, digital QR passport, and support notes.",
+    description: "Access plain-language journey updates, digital QR passport, and entitlements.",
   },
 ];
 
@@ -63,6 +76,7 @@ export function LoginForm() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showEvaluation, setShowEvaluation] = useState(true);
 
   async function login(loginEmail: string, loginPassword: string, label: string = "manual") {
     setLoading(label);
@@ -75,140 +89,161 @@ export function LoginForm() {
       router.push("/dashboard");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Authentication failed. Please verify credentials.");
+      setError(err instanceof Error ? err.message : "Authentication failed. Please verify your email and password.");
     } finally {
       setLoading(null);
     }
   }
 
+  function fillCredentials(fillEmail: string) {
+    setEmail(fillEmail);
+    setPassword(DEMO_PASSWORD);
+  }
+
   return (
-    <div className="w-full max-w-5xl mx-auto space-y-8">
-      {/* Top Header Card */}
-      <div className="text-center space-y-2">
-        <div className="inline-flex items-center gap-2 rounded-full border border-brand-border bg-brand-soft px-3 py-1 text-xs font-semibold text-brand-dark">
-          <span>SafeJourney Coordination Platform</span>
+    <div className="w-full max-w-2xl mx-auto space-y-6">
+      {/* Primary Clean Sign In Card */}
+      <div className="rounded-2xl border border-slate-200/90 bg-white p-6 md:p-8 shadow-xs space-y-6">
+        <div className="text-center space-y-1.5">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-brand/20 bg-brand-soft px-3 py-1 text-xs font-semibold text-brand-dark">
+            <span>SafeJourney Platform</span>
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            Sign In to SafeJourney
+          </h1>
+          <p className="text-xs text-slate-500 max-w-md mx-auto">
+            Enter your credentials to access your facility referral coordination workspace.
+          </p>
         </div>
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
-          Sign In to Workplace
-        </h1>
-        <p className="text-sm text-slate-500 max-w-lg mx-auto">
-          Select a verified healthcare staff persona for 1-click evaluation, or sign in with your email.
-        </p>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            login(email, password, "form");
+          }}
+          className="space-y-4"
+        >
+          <div>
+            <label htmlFor={emailId} className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+              <Mail className="size-3.5 text-slate-400" />
+              Email Address
+            </label>
+            <input
+              id={emailId}
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand/15 placeholder:text-slate-400"
+              placeholder="name@facility.org"
+            />
+          </div>
+
+          <div>
+            <label htmlFor={passwordId} className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+              <Lock className="size-3.5 text-slate-400" />
+              Password
+            </label>
+            <input
+              id={passwordId}
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand/15 placeholder:text-slate-400"
+              placeholder="••••••••"
+            />
+          </div>
+
+          {error && (
+            <div role="alert" className="flex items-start gap-2.5 rounded-xl border border-rose-200 bg-rose-50/80 p-3.5 text-xs text-rose-800">
+              <ShieldAlert className="size-4 shrink-0 text-rose-600 mt-0.5" />
+              <span>{error}</span>
+            </div>
+          )}
+
+          <Button type="submit" loading={loading === "form"} className="w-full py-3 text-sm font-semibold rounded-xl">
+            Sign In to Workplace
+          </Button>
+        </form>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-12 items-start">
-        {/* Left Column: Quick Persona Switcher (7 cols) */}
-        <div className="lg:col-span-7 space-y-3">
-          <div className="flex items-center justify-between pb-1">
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-              Evaluator Personas (1-Click Access)
-            </h2>
-            <span className="text-[11px] font-medium text-slate-400">Password: {DEMO_PASSWORD}</span>
+      {/* Collapsible Evaluation & Testing Access */}
+      <div className="rounded-2xl border border-slate-200/80 bg-slate-50/70 p-4 transition-all">
+        <button
+          type="button"
+          onClick={() => setShowEvaluation(!showEvaluation)}
+          className="flex w-full items-center justify-between text-left text-xs font-semibold text-slate-700 hover:text-slate-900 transition-colors"
+        >
+          <div className="flex items-center gap-2">
+            <Sparkles className="size-3.5 text-brand" />
+            <span>Evaluation &amp; Demonstration Access</span>
+            <span className="rounded bg-slate-200 px-1.5 py-0.5 text-[10px] text-slate-600 font-medium">Sample Roles</span>
           </div>
+          {showEvaluation ? <ChevronUp className="size-4 text-slate-500" /> : <ChevronDown className="size-4 text-slate-500" />}
+        </button>
 
-          <div className="grid gap-2.5">
-            {WORKPLACE_PERSONAS.map((p) => {
-              const Icon = p.icon;
-              const isLoggingIn = loading === p.role;
-              return (
-                <button
-                  key={p.email}
-                  disabled={loading !== null}
-                  onClick={() => login(p.email, DEMO_PASSWORD, p.role)}
-                  className="group relative flex items-center justify-between gap-4 rounded-xl border border-slate-200/90 bg-white p-3.5 text-left shadow-2xs transition-all hover:border-brand hover:shadow-xs hover:bg-slate-50/50 disabled:opacity-50"
-                >
-                  <div className="flex items-start gap-3.5 min-w-0">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 group-hover:bg-brand-soft group-hover:text-brand-dark transition-colors">
-                      <Icon className="size-5" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-sm font-semibold text-slate-900">{p.name}</p>
-                        <span className={`rounded-md border px-2 py-0.5 text-[10px] font-semibold ${p.badgeColor}`}>
-                          {p.role}
-                        </span>
-                      </div>
-                      <p className="text-xs font-medium text-slate-500 truncate mt-0.5">{p.facility}</p>
-                      <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">{p.description}</p>
-                    </div>
-                  </div>
-                  <div className="shrink-0 flex items-center text-slate-400 group-hover:text-brand group-hover:translate-x-0.5 transition-all">
-                    {isLoggingIn ? (
-                      <span className="size-4 animate-spin rounded-full border-2 border-brand border-t-transparent" />
-                    ) : (
-                      <ArrowRight className="size-4" />
-                    )}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Right Column: Direct Sign-In Form (5 cols) */}
-        <div className="lg:col-span-5 rounded-2xl border border-border bg-white p-6 shadow-xs">
-          <div className="mb-5 space-y-1">
-            <h2 className="text-base font-bold text-slate-900">Custom Credentials</h2>
-            <p className="text-xs text-slate-500">Sign in with any authorized account email.</p>
-          </div>
-
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              login(email, password, "form");
-            }}
-            className="space-y-4"
-          >
-            <div>
-              <label htmlFor={emailId} className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-                <Mail className="size-3.5 text-slate-400" />
-                Email Address
-              </label>
-              <input
-                id={emailId}
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand/10"
-                placeholder="doctor@demo.local"
-              />
-            </div>
-
-            <div>
-              <label htmlFor={passwordId} className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-                <Lock className="size-3.5 text-slate-400" />
-                Password
-              </label>
-              <input
-                id={passwordId}
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus:border-brand focus:ring-2 focus:ring-brand/10"
-                placeholder="••••••••"
-              />
-            </div>
-
-            {error && (
-              <div role="alert" className="rounded-lg border border-rose-200 bg-rose-50 p-3 text-xs text-rose-700">
-                {error}
-              </div>
-            )}
-
-            <Button type="submit" loading={loading === "form"} className="w-full py-2.5">
-              Sign In to Workspace
-            </Button>
-          </form>
-
-          <div className="mt-5 rounded-lg border border-slate-100 bg-slate-50 p-3 text-center">
-            <p className="text-[11px] text-slate-500">
-              Demo sandbox initialized with real referral data across primary, community, and tertiary hospitals.
+        {showEvaluation && (
+          <div className="mt-3.5 space-y-2 pt-2 border-t border-slate-200/60">
+            <p className="text-[11px] text-slate-500 mb-2">
+              Click any role below to sign in instantly as that persona, or fill the credentials above.
             </p>
+            <div className="grid gap-2">
+              {EVALUATION_PERSONAS.map((p) => {
+                const Icon = p.icon;
+                const isLoggingIn = loading === p.role;
+                return (
+                  <div
+                    key={p.email}
+                    className="group flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-3 text-left shadow-2xs transition-all hover:border-brand-border hover:shadow-xs"
+                  >
+                    <div className="flex items-start gap-3 min-w-0">
+                      <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-700 group-hover:bg-brand-soft group-hover:text-brand-dark transition-colors">
+                        <Icon className="size-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="text-xs font-bold text-slate-900">{p.name}</p>
+                          <span className={`rounded px-1.5 py-0.5 text-[10px] font-semibold border ${p.badgeColor}`}>
+                            {p.role}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-500 truncate">{p.facility}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => fillCredentials(p.email)}
+                        className="rounded-lg border border-slate-200 px-2.5 py-1 text-[11px] font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                      >
+                        Fill
+                      </button>
+                      <button
+                        type="button"
+                        disabled={loading !== null}
+                        onClick={() => login(p.email, DEMO_PASSWORD, p.role)}
+                        className="flex items-center gap-1 rounded-lg bg-brand px-3 py-1 text-[11px] font-semibold text-white hover:bg-brand-dark transition-colors disabled:opacity-50 shadow-2xs"
+                      >
+                        {isLoggingIn ? (
+                          <span className="size-3 animate-spin rounded-full border border-white border-t-transparent" />
+                        ) : (
+                          <>
+                            <span>1-Click Sign In</span>
+                            <ArrowRight className="size-3" />
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 }
+
