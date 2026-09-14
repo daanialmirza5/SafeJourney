@@ -57,7 +57,7 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="mx-auto max-w-5xl px-6 py-20 text-center">
         <p className="mb-4 inline-flex items-center rounded-full border border-border bg-white px-3 py-1 text-xs font-medium text-slate-500">
-          Health-a-thon 2026 · Maternal &amp; Child Health · Financial &amp; Administrative Support
+          Closed-Loop Platform · Maternal &amp; Newborn Care · Financial &amp; Administrative Support
         </p>
         <h1 className="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">SAFEJOURNEY</h1>
         <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600">&ldquo;Don&apos;t let a referral end with a piece of paper.&rdquo;</p>
@@ -174,7 +174,7 @@ export default function LandingPage() {
       </section>
 
       <footer className="border-t border-border bg-surface py-8 text-center text-xs text-slate-400">
-        SafeJourney is an assistive, non-clinical operational workflow tool built for Health-a-thon 2026. Demo mode
+        SafeJourney is an assistive, non-clinical operational workflow coordination platform. Demo mode
         uses synthetic data only.
       </footer>
     </div>
