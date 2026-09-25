@@ -123,3 +123,12 @@ export const createTaskSchema = z.object({
   dueDate: z.string(),
   source: z.string().default("manual"),
 });
+
+/**
+ * Formats Zod validation issues into a single, clean user-facing error message.
+ */
+export function formatZodError(error: z.ZodError): string {
+  const issues = error?.issues || (error as unknown as { errors?: z.ZodIssue[] })?.errors || [];
+  if (issues.length === 0) return error?.message || "Invalid input";
+  return issues.map((e) => `${e.path.join(".") || "field"}: ${e.message}`).join("; ");
+}

@@ -5,6 +5,7 @@ import {
   adminOverrideSchema,
   addCaregiverSchema,
   loginSchema,
+  formatZodError,
 } from "./validation";
 
 /**
@@ -99,5 +100,16 @@ describe("loginSchema", () => {
 
   it("accepts a well-formed login", () => {
     expect(loginSchema.safeParse({ email: "a@b.com", password: "demo1234" }).success).toBe(true);
+  });
+});
+
+describe("formatZodError helper", () => {
+  it("formats schema errors into clean message strings", () => {
+    const parse = loginSchema.safeParse({ email: "invalid", password: "" });
+    if (!parse.success) {
+      const msg = formatZodError(parse.error);
+      expect(msg).toContain("email");
+      expect(msg).toContain(";");
+    }
   });
 });
