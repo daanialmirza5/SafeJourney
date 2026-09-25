@@ -15,20 +15,23 @@ export interface NotifyInput {
  * out through the demo email/WhatsApp provider adapters (spec section 30).
  * Provider failures never block the in-app notification from being saved. */
 export async function notify(input: NotifyInput) {
+  const safeTitle = (input.title || "").trim() || "SafeJourney Notification";
+  const safeBody = (input.body || "").trim() || "A referral status update has occurred.";
+
   const notification = await db.notification.create({
     data: {
       userId: input.userId,
       category: input.category,
-      title: input.title,
-      body: input.body,
+      title: safeTitle,
+      body: safeBody,
       referralId: input.referralId,
     },
   });
 
   try {
     const user = await db.user.findUnique({ where: { id: input.userId } });
-    if (user?.email) await getEmailProvider().send(user.email, input.title, input.body);
-    if (user?.phone) await getWhatsAppProvider().send(user.phone, input.title, input.body);
+    if (user?.email) await getEmailProvider().send(user.email, safeTitle, safeBody);
+    if (user?.phone) await getWhatsAppProvider().send(user.phone, safeTitle, safeBody);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error("[notify] provider dispatch failed", err);
