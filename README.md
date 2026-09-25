@@ -2,11 +2,13 @@
 
 <div align="center">
 
-![SafeJourney Banner](docs/screenshots/landing-hero.png)
+![SafeJourney Banner](docs/screenshots/01-landing-hero.png)
 
-### **Closed-Loop Maternal & Newborn Referral + Administrative Continuity Platform**
-*Coordinating referrals, handoffs, discharge transitions, back-referrals, and follow-up workflows while keeping clinical decisions with qualified healthcare professionals.*
+### **Closed-Loop Maternal & Newborn Referral and Administrative Continuity Platform**
+*Connecting referring facilities, receiving hospitals, emergency transport, document verification, welfare scheme entitlements, and post-discharge community follow-up while keeping clinical decisions with qualified healthcare professionals.*
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Render-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://safejourney-w7dz.onrender.com)
+[![Demo Video](https://img.shields.io/badge/Demo_Video-YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=P65yNU_TLf8)
 [![Next.js](https://img.shields.io/badge/Next.js-14.2-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
@@ -16,72 +18,79 @@
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-> *"Don't let a maternal referral end with a piece of paper."*
+> *"Don't let a maternal or newborn referral end with a piece of paper."*
 
 </div>
 
 ---
 
-## 1. Project Title & Tagline
+## 🚀 Live Demo
 
-**SafeJourney** — *Don't let a maternal or newborn referral end with a piece of paper.*
-
----
-
-## 2. Project Overview
-
-**SafeJourney** is a maternal and newborn referral-coordination platform that helps healthcare teams coordinate referrals, handoffs, discharge transitions, back-referrals, and follow-up workflows while keeping clinical decisions with qualified healthcare professionals.
-
-It acts as an assistive, **non-clinical digital coordination layer** connecting the entire continuum of maternal care: from the referring physician's initial transfer decision, through receiving facility acknowledgment, emergency transport logistics, document digitization, scheme entitlement discovery (JSSK, PMMVY, PM-JAY), to inpatient arrival, discharge summary generation, back-referral acknowledgment, and structured community health worker (ASHA/ANM) follow-up.
+- **Deployed Application**: [https://safejourney-w7dz.onrender.com](https://safejourney-w7dz.onrender.com)
+- **Instant Demo Switcher**: Pre-configured with 1-click role logins for Doctor (PHC), Intake Coordinator (District Hospital), Follow-up Worker (ASHA), Patient, and District Administrator.
 
 ---
 
-## 3. Problem Statement
+## 🎥 Demo Video
 
-Across high-burden maternal care corridors, thousands of high-risk obstetric and neonatal emergencies are referred from Primary Health Centers (PHCs) and Community Health Centers (CHCs) to tertiary district hospitals and medical colleges every year.
-
-Tragically, many referrals become administrative dead ends due to systemic coordination gaps:
-1. **Unacknowledged Handoffs**: Patients arrive at receiving hospitals without advance notification or prior acknowledgment.
-2. **Lost Paperwork & Identity Friction**: Physical referral slips and diagnostic reports get damaged, lost in transit, or overlooked during emergency intake.
-3. **Delayed or Uncoordinated Transport**: Families struggle to arrange emergency ambulances without central tracking.
-4. **Missed Social Welfare Entitlements**: Under time pressure, eligible families miss out on government cash transfers and free transport/diagnostics (JSSK, PMMVY, PM-JAY).
-5. **Disconnected Post-Discharge Care**: Once discharged, patients return home with no structured back-referral to their local primary clinic or ASHA worker, leading to preventable postpartum complications.
+- **YouTube Walkthrough**: [https://www.youtube.com/watch?v=P65yNU_TLf8](https://www.youtube.com/watch?v=P65yNU_TLf8)
+- Complete demonstration covering referral creation, QR passport generation, intake triage, emergency transport coordination, welfare benefit discovery, discharge back-referral, and ASHA post-discharge milestone completion.
 
 ---
 
-## 4. Our Solution
+## 📌 Overview
 
-SafeJourney solves the **operational and administrative coordination problem** through a unified digital platform built around our core operating principle:
+**SafeJourney** is an assistive, non-clinical digital coordination platform designed to eliminate administrative dead ends in maternal and newborn referrals. Across rural and semi-urban health corridors, obstetric and neonatal emergencies often require rapid escalation from primary/community health centers to tertiary hospitals.
+
+SafeJourney creates an unbroken digital coordination layer around the existing healthcare ecosystem: from the referring physician's initial transfer decision, through receiving facility acknowledgment, emergency transport tracking, diagnostic document verification, government welfare scheme discovery (JSSK, PMMVY, PM-JAY), to inpatient arrival, discharge summary generation, structured back-referral, and ASHA community follow-up.
+
+---
+
+## 🎯 Problem Statement
+
+Every year, high-risk obstetric and neonatal emergencies are referred across healthcare facilities. However, critical gaps in operational handoffs cause preventable delays and complications:
+
+1. **Unacknowledged Handoffs**: Patients arrive at receiving hospitals without advance digital notice or confirmed bed/specialist availability.
+2. **Lost Paperwork & Identity Friction**: Physical referral slips, lab reports, and ultrasounds are easily lost or damaged in transit.
+3. **Uncoordinated Transport**: Families struggle to arrange and track emergency ambulances between facilities.
+4. **Missed Social Welfare Entitlements**: High-stress transfers lead to missed government entitlements (JSSK zero-expense benefits, PMMVY maternity benefits, PM-JAY coverage).
+5. **Disconnected Post-Discharge Care**: After hospital discharge, patients return home with no structured back-referral to their local primary clinic or ASHA worker, leading to unmonitored postpartum complications.
+
+---
+
+## 💡 Solution
+
+SafeJourney provides an end-to-end coordination platform grounded in a single foundational principle:
 
 > **"AI explains. Rules verify. Humans decide."**
 
-* **Closed-Loop Referral Lifecycle**: Every referral follows a strict, deterministic state machine with verifiable handoffs.
-* **Opaque QR Referral Passport**: A lightweight, offline-printable QR code acting as a secure lookup token (no patient data embedded in the QR token itself).
-* **Referral Rescue Engine**: Autonomous SLA monitoring that flags unacknowledged referrals as `STUCK` and prompts immediate operational rerouting.
-* **Deterministic Benefit Radar**: Pure rule-engine matching against national and state maternal welfare policies (JSSK, PMMVY, PM-JAY).
-* **Full-Cycle Back-Referral & ASHA Follow-Up**: Closes the loop after hospital discharge by generating editable back-referrals and tracking community health milestones.
+- **Closed-Loop Referral Lifecycle**: Every transfer follows a deterministic, verifiable state machine from creation to final case closure.
+- **Opaque QR Referral Passport**: A lightweight, offline-scannable QR code that serves as a secure lookup token without storing raw patient PII in the code itself.
+- **Referral Rescue Engine**: Automated SLA monitoring that flags unacknowledged referrals as `STUCK` and prompts immediate operational rerouting.
+- **Deterministic Benefit Radar**: Pure rule-engine evaluation against national and state maternal welfare policies (JSSK, PMMVY, PM-JAY) with cited policy sources.
+- **Full-Cycle Back-Referral & ASHA Follow-Up**: Closes the loop after hospital discharge by generating structured back-referrals and tracking home visit milestones.
 
 ---
 
-## 5. Core Features
+## ✨ Key Features
 
-- **Doctor Command Center**: Fast referral generation, facility selection, clinical reason documentation, and patient/caregiver contact capture.
-- **Coordinator Triage Inbox**: Receiving facility intake dashboard to accept, request clarification, or decline referrals with real-time capacity feedback.
-- **Emergency Transport Logistics**: Request, assign, and track ambulance transport stages (`REQUESTED` → `ASSIGNED` → `IN_TRANSIT` → `ARRIVED`).
-- **QR Referral Passport & Quick Scanner**: Tokenized QR code scanner for instant intake triage and physical paper-to-digital handoff.
-- **Administrative Completeness Checklist**: Real-time progress bar tracking required documents, benefit documentation, and administrative steps.
-- **Rule-Based Scheme Entitlement Discovery**: Pure deterministic evaluation of JSSK, PMMVY, and PM-JAY criteria with required document checklists.
-- **Referral Rescue Engine**: Deterministic timeout detection that surfaces at-risk referrals exceeding SLA thresholds.
-- **Document Vault & AI Assistive OCR**: Upload and preview PDF/image medical documents with human-confirmed data extraction.
-- **Discharge & Back-Referral Loop**: Record discharge destinations and send structured back-referrals requiring origin facility acknowledgment.
-- **Newborn Continuity & Milestone Schedule**: Automatic generation of post-discharge home visit, immunization, and growth monitoring tasks.
+- **Doctor Command Center**: Rapid structured referral creation with pre-filled clinical reasons, facility selection, and caregiver contact capture.
+- **Coordinator Triage Inbox**: Intake dashboard for receiving hospital staff to accept, request clarification, or decline referrals with real-time capacity feedback.
+- **Opaque QR Referral Passport & Camera Scanner**: Fast camera-based QR intake triage linking physical paper tokens to secure digital records.
+- **Emergency Transport Logistics**: Track ambulance lifecycle stages (`REQUESTED` → `ASSIGNED` → `IN_TRANSIT` → `ARRIVED`).
+- **Administrative Completeness Score**: Live readiness indicators tracking clinical documentation, identity verification, financial entitlements, and discharge planning.
+- **Deterministic Benefit Radar**: Rule-based matching against JSSK, PMMVY, and PM-JAY criteria with required document checklists and policy citations.
+- **Referral Rescue Engine**: Deterministic timeout detection that surfaces at-risk referrals exceeding SLA thresholds for prompt operational intervention.
+- **Document Vault & AI-Assisted OCR**: Upload and preview PDF/image medical documents with human-confirmed structured data extraction.
+- **Structured Discharge & Back-Referral Loop**: Record discharge outcomes and issue structured back-referrals requiring origin facility acknowledgment.
+- **Newborn Continuity & Milestone Schedule**: Automatic generation of post-discharge home visits, immunization reminders, and growth checks.
 - **Multilingual Patient Portal**: English, Hindi (हिंदी), and Marathi (मराठी) support with plain-language status explanations.
-- **Administrative Governance & Audit Log**: Full audit trail recording actor, role, timestamp, old state, and new state for every action.
-- **Operational Analytics Dashboard**: Real-time calculation of Closed-Loop Referral Rate, median handoff time, and bottleneck metrics.
+- **Administrative Governance & Audit Log**: Immutable audit trail recording actor, role, timestamp, old state, and new state for every action.
+- **Operational Analytics Dashboard**: Real-time calculation of Closed-Loop Referral Rate, median handoff time, and corridor bottleneck metrics.
 
 ---
 
-## 6. Key Workflows
+## 🔄 How It Works
 
 ```text
 [PHC / CHC Doctor]
@@ -104,85 +113,13 @@ SafeJourney solves the **operational and administrative coordination problem** t
        ▼ (Origin Facility Acknowledges Receipt & Assigns Worker)
 [FOLLOW_UP_PENDING] (ASHA home visits, immunization reminders, growth checks)
        │
-       ▼ (All milestones completed or explicitly skipped)
+       ▼ (All milestones completed or explicitly skipped with reason)
 [CLOSED] (Immutable Case Record)
 ```
 
 ---
 
-## 7. User Roles
-
-SafeJourney enforces strict role-based access control (RBAC) across 6 distinct personas:
-
-| Role | Primary User | Key Capabilities |
-|---|---|---|
-| **DOCTOR** | Referring Physician (PHC/CHC) | Create referrals, view outbound cases, review back-referrals, initiate case closure. |
-| **COORDINATOR** | Receiving Hospital Intake Staff | Triage inbound referrals, accept/decline, manage transport, record arrival & discharge, issue back-referral. |
-| **FOLLOWUP** | ASHA / ANM Community Worker | View assigned post-discharge maternal & newborn milestones, complete visits with notes, skip with valid reasons. |
-| **PATIENT** | Referred Mother | View plain-language journey status, view digital passport, access multilingual guidance. |
-| **CAREGIVER** | Family Member / Attendant | Scoped, revocable access to assist the patient with transport and documentation. |
-| **ADMIN** | District Health Officer / System Admin | User/facility management, benefit rule configuration, milestone templates, system health, immutable audit logs. |
-
----
-
-## 8. Screenshots & Visual Walkthrough
-
-### Landing & Quick Demo Role Switcher
-| Landing Portal & Value Proposition | 1-Click Role Switcher for Evaluators |
-|:---:|:---:|
-| ![Landing Page Hero](docs/screenshots/landing-hero.png) | ![Login & Role Switcher](docs/screenshots/login-roles.png) |
-
----
-
-### Referral Creation & Doctor Workflow
-| Doctor Command Center | Structured Referral Creation Form |
-|:---:|:---:|
-| ![Doctor Dashboard](docs/screenshots/dashboard.png) | ![Create Referral Form](docs/screenshots/create-referral.png) |
-
----
-
-### Digital Referral Passport & Scheme Benefit Radar
-<div align="center">
-
-![Referral Passport & Benefit Radar](docs/screenshots/referral-details.png)
-
-</div>
-
----
-
-### Receiving Facility Triage & Patient Experience
-| Coordinator Triage & Transport Hub | Patient Live Journey & Multilingual Portal |
-|:---:|:---:|
-| ![Coordinator Triage](docs/screenshots/referrals.png) | ![Patient Journey](docs/screenshots/patient-journey.png) |
-
----
-
-### Automated Rescue Engine & SLA Escalation
-<div align="center">
-
-![Referral Rescue Engine](docs/screenshots/rescue-engine.png)
-
-</div>
-
----
-
-### Post-Discharge Follow-Up & Administrative Governance
-| ASHA Community Milestone Dashboard | Administrative Governance & Audit Trail |
-|:---:|:---:|
-| ![ASHA Follow-Up](docs/screenshots/follow-up.png) | ![Admin Governance](docs/screenshots/admin.png) |
-
----
-
-### Operational Analytics
-<div align="center">
-
-![Analytics Metrics](docs/screenshots/analytics.png)
-
-</div>
-
----
-
-## 9. System Architecture
+## 🏗️ System Architecture
 
 SafeJourney is architected as a modular, unified full-stack application with strict separation between pure logic, database persistence, and user interfaces:
 
@@ -217,27 +154,93 @@ SafeJourney is architected as a modular, unified full-stack application with str
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
-For detailed architectural documentation, see [docs/04_ARCHITECTURE.md](docs/04_ARCHITECTURE.md).
+For detailed architectural documentation, see [docs/04_ARCHITECTURE.md](https://github.com/daanialmirza5/SafeJourney/tree/main/docs/04_ARCHITECTURE.md).
 
 ---
 
-## 10. Technology Stack
+## 🛠️ Tech Stack
 
-- **Framework**: [Next.js 14.2.35](https://nextjs.org/) (App Router, React Server Components)
-- **Language**: [TypeScript 5.9](https://www.typescriptlang.org/) (Strict Mode)
-- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
-- **Database & ORM**: [Prisma 5.22](https://www.prisma.io/) with SQLite (Zero-config demo) / PostgreSQL-ready
-- **Authentication**: Secure JWT stored in `httpOnly`, `SameSite=Lax` cookies with bcrypt password hashing
-- **Data Validation**: [Zod](https://zod.dev/) schemas on all API boundaries
-- **Charts & Visualization**: [Recharts 3.10](https://recharts.org/)
-- **QR Code Generation**: [qrcode](https://www.npmjs.com/package/qrcode) (Opaque token generation)
-- **Unit Testing**: [Vitest 1.6](https://vitest.dev/) (172 unit & integration tests)
-- **End-to-End Testing**: [Playwright 1.63](https://playwright.dev/)
-- **Containerization**: [Docker](https://www.docker.com/) & Docker Compose
+| Domain | Technologies |
+|---|---|
+| **Frontend** | [Next.js 14.2](https://nextjs.org/) (App Router, Server Components), [React 18](https://react.dev/), [Tailwind CSS v4](https://tailwindcss.com/), [Lucide React](https://lucide.dev/), [Recharts 3.10](https://recharts.org/) |
+| **Backend** | Next.js API Route Handlers (Node.js runtime), [Zod 4.5](https://zod.dev/) payload validation, [bcryptjs](https://www.npmjs.com/package/bcryptjs), [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken) |
+| **Database & ORM** | [Prisma 5.22](https://www.prisma.io/), SQLite (Zero-config local development and demo), PostgreSQL-ready |
+| **AI / OCR** | Provider abstraction layer supporting offline deterministic assistant and OCR document extraction with strict clinical safety guardrails (`isClinicalQuestion()`) |
+| **APIs & Services** | [qrcode](https://www.npmjs.com/package/qrcode) (Opaque token generation), Storage Service (Local disk / AWS S3 / Cloudflare R2 adapter), In-App Notification Service |
+| **Deployment** | [Render](https://render.com/) Web Service, Docker, Docker Compose |
+| **Testing & Quality** | [Vitest 1.6](https://vitest.dev/) (172 unit & integration tests), [Playwright 1.63](https://playwright.dev/) (E2E testing), [TypeScript 5.9](https://www.typescriptlang.org/) (Strict), [ESLint](https://eslint.org/) |
 
 ---
 
-## 11. Project Structure
+## 📸 Application Screenshots
+
+### 1. Landing Portal & Value Proposition
+<div align="center">
+
+![Landing Page Hero](docs/screenshots/01-landing-hero.png)
+
+</div>
+
+---
+
+### 2. 1-Click Role Switcher & Authentication
+<div align="center">
+
+![Login & Role Switcher](docs/screenshots/02-quick-login-roles.png)
+
+</div>
+
+---
+
+### 3. Doctor Command Center & Referral Creation
+| Doctor Dashboard | Structured Referral Creation Form |
+|:---:|:---:|
+| ![Doctor Dashboard](docs/screenshots/03-doctor-dashboard.png) | ![Create Referral Form](docs/screenshots/04-create-referral.png) |
+
+---
+
+### 4. Digital Referral Passport & Scheme Benefit Radar
+<div align="center">
+
+![Referral Passport & Benefit Radar](docs/screenshots/05-referral-passport-detail.png)
+
+</div>
+
+---
+
+### 5. Receiving Facility Intake Triage & Patient Journey
+| Coordinator Triage & Transport Hub | Patient Live Journey & Multilingual Portal |
+|:---:|:---:|
+| ![Coordinator Triage](docs/screenshots/06-coordinator-triage.png) | ![Patient Journey](docs/screenshots/07-patient-journey.png) |
+
+---
+
+### 6. Referral Rescue Engine & SLA Escalations
+<div align="center">
+
+![Referral Rescue Engine](docs/screenshots/08-referral-rescue-engine.png)
+
+</div>
+
+---
+
+### 7. Post-Discharge Follow-Up & Administrative Governance
+| ASHA Community Milestone Dashboard | Administrative Governance & Audit Trail |
+|:---:|:---:|
+| ![ASHA Follow-Up](docs/screenshots/09-followup-worker-dashboard.png) | ![Admin Governance](docs/screenshots/10-admin-panel.png) |
+
+---
+
+### 8. Operational Analytics Dashboard
+<div align="center">
+
+![Analytics Metrics](docs/screenshots/11-analytics-metrics.png)
+
+</div>
+
+---
+
+## 📂 Project Structure
 
 ```text
 SafeJourney/
@@ -245,7 +248,7 @@ SafeJourney/
 │   ├── app/                      # Next.js App Router routes and API handlers
 │   │   ├── (app)/                # Authenticated application views
 │   │   │   ├── admin/            # System administration & governance
-│   │   │   ├── analytics/        # Performance KPIs & bottlenecks
+│   │   │   ├── analytics/        # Performance KPIs & corridor bottlenecks
 │   │   │   ├── dashboard/        # Role-customized command centers
 │   │   │   ├── referrals/        # Referral creation, tracking & details
 │   │   │   ├── scan/             # QR Referral Passport camera scanner
@@ -271,11 +274,12 @@ SafeJourney/
 ├── prisma/
 │   ├── schema.prisma             # Database schema definition
 │   └── seed.ts                   # Realistic demo data seeder (55+ cases)
-├── docs/                         # Comprehensive documentation suite
+├── docs/                         # Comprehensive documentation suite (16 chapters)
 │   ├── screenshots/              # High-resolution UI screenshots
 │   ├── 01_PRODUCT_OVERVIEW.md    # Product scope & principles
 │   ├── 04_ARCHITECTURE.md        # Deep-dive architecture specification
-│   ├── 13_DEMO_GUIDE.md          # Step-by-step judge demonstration guide
+│   ├── 10_SECURITY_PRIVACY.md    # Security, consent, and audit specifications
+│   ├── 13_DEMO_GUIDE.md          # Step-by-step evaluator demonstration guide
 │   └── 15_LIMITATIONS.md         # Explicit safety & system boundaries
 ├── e2e/                          # Playwright end-to-end test suites
 ├── Dockerfile                    # Production container specification
@@ -285,7 +289,93 @@ SafeJourney/
 
 ---
 
-## 12. Local Setup Instructions
+## 📚 Documentation
+
+The repository includes a comprehensive 16-chapter technical documentation suite in the [`docs/`](https://github.com/daanialmirza5/SafeJourney/tree/main/docs) directory:
+
+| Chapter | Topic | Description |
+|---|---|---|
+| [01_PRODUCT_OVERVIEW.md](https://github.com/daanialmirza5/SafeJourney/tree/main/docs/01_PRODUCT_OVERVIEW.md) | Product Overview | Core promise, scope boundaries, and MVP capabilities |
+| [02_PRD.md](https://github.com/daanialmirza5/SafeJourney/tree/main/docs/02_PRD.md) | PRD | Product Requirements Document and user stories |
+| [03_TRD.md](https://github.com/daanialmirza5/SafeJourney/tree/main/docs/03_TRD.md) | TRD | Technical Requirements Document and system limits |
+| [04_ARCHITECTURE.md](https://github.com/daanialmirza5/SafeJourney/tree/main/docs/04_ARCHITECTURE.md) | Architecture | Detailed system architecture and data flows |
+| [05_USER_JOURNEYS.md](https://github.com/daanialmirza5/SafeJourney/tree/main/docs/05_USER_JOURNEYS.md) | User Journeys | Step-by-step role flows and interactions |
+| [06_DATABASE_SCHEMA.md](https://github.com/daanialmirza5/SafeJourney/tree/main/docs/06_DATABASE_SCHEMA.md) | Database Schema | Entity relationship model and indexes |
+| [07_API_SPECIFICATION.md](https://github.com/daanialmirza5/SafeJourney/tree/main/docs/07_API_SPECIFICATION.md) | API Specification | 40+ REST API endpoints and payload contracts |
+| [08_AI_ARCHITECTURE.md](https://github.com/daanialmirza5/SafeJourney/tree/main/docs/08_AI_ARCHITECTURE.md) | AI Architecture | Assistant and OCR provider abstractions |
+| [09_RULE_ENGINE.md](https://github.com/daanialmirza5/SafeJourney/tree/main/docs/09_RULE_ENGINE.md) | Rule Engine | Deterministic Benefit Radar rule specifications |
+| [10_SECURITY_PRIVACY.md](https://github.com/daanialmirza5/SafeJourney/tree/main/docs/10_SECURITY_PRIVACY.md) | Security & Privacy | RBAC, encryption, consent, and audit logs |
+| [11_TESTING_STRATEGY.md](https://github.com/daanialmirza5/SafeJourney/tree/main/docs/11_TESTING_STRATEGY.md) | Testing Strategy | Unit, integration, and E2E test documentation |
+| [12_DEPLOYMENT.md](https://github.com/daanialmirza5/SafeJourney/tree/main/docs/12_DEPLOYMENT.md) | Deployment | Production deployment on Render and Docker |
+| [13_DEMO_GUIDE.md](https://github.com/daanialmirza5/SafeJourney/tree/main/docs/13_DEMO_GUIDE.md) | Demo Guide | 5-minute judge walkthrough script |
+| [14_PILOT_PLAN.md](https://github.com/daanialmirza5/SafeJourney/tree/main/docs/14_PILOT_PLAN.md) | Pilot Plan | 90-day phased district implementation plan |
+| [15_LIMITATIONS.md](https://github.com/daanialmirza5/SafeJourney/tree/main/docs/15_LIMITATIONS.md) | Limitations | Explicit non-goals and simulated subsystems |
+| [16_FUTURE_ROADMAP.md](https://github.com/daanialmirza5/SafeJourney/tree/main/docs/16_FUTURE_ROADMAP.md) | Future Roadmap | Post-pilot enhancements and national integrations |
+
+---
+
+## ☁️ Deployment
+
+SafeJourney is deployed on [Render](https://render.com/) as a containerized web service.
+
+- **Production URL**: [https://safejourney-w7dz.onrender.com](https://safejourney-w7dz.onrender.com)
+- **Container Build**: Multi-stage `Dockerfile` with zero-config standalone production output.
+- **Docker Compose**: Pre-configured `docker-compose.yml` for single-command containerized local execution.
+
+---
+
+## 🧪 Testing
+
+SafeJourney has a verified, comprehensive automated testing suite:
+
+```bash
+# Static TypeScript validation (0 errors)
+npm run typecheck
+
+# Code style and lint validation (0 warnings or errors)
+npm run lint
+
+# Run all 172 Vitest unit and integration tests (16 test files, 100% passing)
+npm run test
+
+# Run Playwright E2E smoke tests
+npm run test:e2e:smoke
+```
+
+### Verified Test Suites:
+- `src/lib/referral/stateMachine.test.ts` (20 tests) — Deterministic forward transitions, invalid move rejections, lateral overrides.
+- `src/lib/referral/newbornContinuity.test.ts` (34 tests) — Linked mother-newborn cases and milestone scheduling.
+- `src/lib/analytics/kpi.test.ts` (16 tests) — Closed-loop referral rate and SLA median time calculations.
+- `src/lib/referral/rescueEngine.test.ts` (9 tests) — SLA timeout detection and status promotion.
+- `src/lib/referral/listView.test.ts` (12 tests) — Scoped list query generation and role filters.
+- `src/lib/referral/access.test.ts` (11 tests) — Server-side RBAC and data isolation rules.
+- `src/lib/referral/closureSafeguards.test.ts` (6 tests) — Automatic case closure conditions.
+- `src/lib/validation.test.ts` (16 tests) — Zod payload schemas.
+- `src/lib/storage/storageService.test.ts` (9 tests) — Provider abstraction and graceful local disk fallback.
+- `src/lib/benefits/ruleEngine.test.ts` (8 tests) — Deterministic JSSK, PMMVY, and PM-JAY matching.
+- `src/lib/referral/adminCompleteness.test.ts` (7 tests) — Readiness score calculations.
+- `src/lib/notifications/templates.test.ts` (6 tests) — Notification formatting across channels.
+- `src/lib/ai/safety.test.ts` (2 tests) — Clinical question blocker enforcement.
+- `src/lib/format.test.ts` (7 tests) — Display formatting.
+- `src/lib/rateLimit.test.ts` (4 tests) — Rate limiting algorithms.
+- `src/lib/i18n/translate.test.ts` (5 tests) — Multilingual key lookups.
+
+---
+
+## 🔐 Security / Privacy
+
+- **Password Security**: Passwords hashed with `bcryptjs` (10 rounds).
+- **Session Security**: JWT stored in `httpOnly`, `SameSite=Lax` cookies (with `Secure` in production) preventing XSS token theft.
+- **Server-Side Authorization**: Every API mutation route enforces strict role-based gating (`requireRole()`) and record-level scoping (`canAccessReferral()`).
+- **Opaque Tokenization**: QR Referral Passports contain random opaque UUID tokens; no unencrypted patient PII is stored inside QR codes.
+- **Document Security**: Strict MIME-type filtering, file size limits (10 MB cap), randomized UUID disk keys, and scoped access checks on all document routes.
+- **Consent Architecture**: Scoped, revocable caregiver and health worker access with audit records.
+- **Immutable Audit Trail**: Centralized audit logging capturing actor, role, timestamp, old state, and new state for all operations.
+- **Clinical Safety Fence**: The AI assistant strictly blocks diagnostic and clinical advice queries using `isClinicalQuestion()`.
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
 - **Node.js**: v20.x or higher LTS
@@ -293,6 +383,7 @@ SafeJourney/
 - **Git**: Installed and configured
 
 ### Step-by-Step Installation
+
 ```bash
 # 1. Clone the repository
 git clone https://github.com/daanialmirza5/SafeJourney.git
@@ -316,128 +407,23 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 13. Environment Variables
+## 🔮 Future Scope
 
-All variables have safe zero-config defaults for local evaluation in `DEMO_MODE=true`:
-
-| Variable | Default | Purpose |
-|---|---|---|
-| `DATABASE_URL` | `"file:./dev.db"` | SQLite database connection string |
-| `JWT_SECRET` | `"demo-insecure-secret..."` | Secret key for signing session tokens |
-| `APP_URL` | `"http://localhost:3000"` | Base application URL |
-| `DEMO_MODE` | `"true"` | Enables instant demo switcher & offline stubs |
-| `REFERRAL_ACK_TIMEOUT_MINUTES` | `"10"` | Timeout threshold for Rescue Engine SLA |
-| `AI_PROVIDER` | `"demo"` | `"demo"` (offline deterministic) or live API |
-| `STORAGE_PROVIDER` | `"local"` | `"local"` (disk) or `"s3"` (AWS/R2/MinIO) |
-| `EMAIL_PROVIDER` | `"demo"` | In-app notification adapter |
-| `WHATSAPP_PROVIDER` | `"demo"` | In-app notification adapter |
+- **ABDM Integration**: Ayushman Bharat Digital Mission (M1/M2/M3) integration for longitudinal health records.
+- **FHIR / HL7 Bundles**: Export standardized FHIR referral bundles for inter-hospital EHR interoperability.
+- **Mobile PWA Offline Sync**: Service-worker caching for low-connectivity rural ASHA home visits.
+- **Live SMS/WhatsApp Gateway**: Production integration with national telecom gateways for direct SMS notifications.
 
 ---
 
-## 14. Database Setup & Seeding
+## 👥 Team / Author
 
-SafeJourney includes a realistic database seeder that creates an active regional care network:
-* **8 Healthcare Facilities**: District hospitals, Sub-district hospitals, Community Health Centers, and Primary Health Centers.
-* **10 Pre-configured Users**: Doctors, intake coordinators, ASHA follow-up workers, and administrators.
-* **55+ Referral Cases**: Seeded across every stage of the referral lifecycle (draft, acknowledged, in-transit, arrived, discharged, back-referred, and closed).
+**SafeJourney** is designed and built by:
 
-To reset and re-seed the database at any time:
-```bash
-npm run db:seed
-```
+- **Daanial Mirza** — [@daanialmirza5](https://github.com/daanialmirza5)
 
 ---
 
-## 15. Running the Frontend & Backend
+## 📄 License
 
-SafeJourney is a unified Next.js App Router application where frontend pages and backend API route handlers run concurrently:
-
-```bash
-# Start development server on port 3000
-npm run dev
-
-# Or run with Docker Compose
-docker compose up --build
-```
-
----
-
-## 16. Testing & Quality Checks
-
-SafeJourney features a comprehensive testing pipeline:
-
-```bash
-# Run TypeScript static typecheck
-npm run typecheck
-
-# Run ESLint validation
-npm run lint
-
-# Run all 172 Vitest unit and integration tests
-npm run test
-
-# Run Playwright End-to-End test suite
-npm run test:e2e:smoke
-```
-
----
-
-## 17. Demo Workflow for Evaluators
-
-For a 5-minute end-to-end demonstration:
-
-1. **Launch App**: Open [http://localhost:3000](http://localhost:3000) and click **"Quick Demo Login"**.
-2. **Referring Doctor**: Select **Doctor (PHC)**. Click **"New Referral"**, enter patient details, select receiving facility, view the instant **Benefit Radar**, and submit.
-3. **QR Passport**: Click on the new referral to view the **Digital Referral Passport** and QR code.
-4. **Receiving Coordinator**: Use the role switcher to switch to **Coordinator (District Hospital)**. Open the referral and click **"Accept Referral"**.
-5. **Transport Coordination**: Request and assign transport, then mark **"Confirm Arrival"**.
-6. **Discharge & Back-Referral**: Click **"Discharge Patient"**, enter destination, and click **"Generate Back-Referral"**.
-7. **Acknowledge & Close Loop**: Switch back to **Doctor (PHC)**, open the back-referral, click **"Acknowledge & Assign Follow-Up"**, and assign an ASHA worker.
-8. **ASHA Milestones**: Switch to **Follow-up Worker (ASHA)**, review the newborn milestones, complete the home visit, and watch the case automatically advance to **CLOSED**.
-
-For detailed judge scenarios, see [docs/13_DEMO_GUIDE.md](docs/13_DEMO_GUIDE.md).
-
----
-
-## 18. Safety & Scope Boundaries
-
-SafeJourney maintains strict non-clinical safety boundaries enforced at both the code and architectural levels:
-
-* 🚫 **NO Clinical Diagnosis**: The platform never diagnoses medical conditions or interprets laboratory results.
-* 🚫 **NO Medical Prescriptions**: The platform never prescribes or suggests medication dosages.
-* 🚫 **NO Clinical Risk Scoring**: The platform does not calculate clinical early warning scores (MEOWS/NEWS). The Rescue Engine tracks operational SLA timers only.
-* 🚫 **NO Autonomous Medical Advice**: The AI Copilot operates strictly in administrative explanation and document summarization mode. Clinical queries are programmatically blocked by `isClinicalQuestion()`.
-
----
-
-## 19. Known Limitations
-
-- **Storage**: Defaults to local disk storage in development; requires S3 credentials for distributed deployments.
-- **SMS/WhatsApp**: Notifications are delivered in-app in `DEMO_MODE`; requires external SMS/WhatsApp gateway integration for live production.
-- **Ambulance Dispatch**: Transport status updates are coordinator-recorded; does not include live GPS satellite telemetry.
-
----
-
-## 20. Future Improvements
-
-- National Ayushman Bharat Digital Mission (ABDM) / MCTS API integration.
-- FHIR / HL7 compliant referral bundle export.
-- Push notification service worker for offline ASHA mobile PWA access.
-- Biometric & Aadhaar authentication integration for social benefit verification.
-
----
-
-## 21. Contributing
-
-Contributions to SafeJourney are welcome!
-1. Fork the repository.
-2. Create a feature branch (`git checkout -b feature/continuity-enhancement`).
-3. Commit your changes (`git commit -m 'feat: add offline caching for follow-up worker'`).
-4. Push to the branch (`git push origin feature/continuity-enhancement`).
-5. Open a Pull Request.
-
----
-
-## 22. License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
