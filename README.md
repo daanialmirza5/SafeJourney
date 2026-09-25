@@ -416,13 +416,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 👥 Team / Author
-
-**SafeJourney** is designed and built by:
-
-- **Daanial Mirza** — [@daanialmirza5](https://github.com/daanialmirza5)
-
----
 
 ## 📄 License
 
