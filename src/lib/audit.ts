@@ -27,3 +27,17 @@ export async function recordAuditEvent(input: AuditEventInput) {
     },
   });
 }
+
+/**
+ * Generates a human-readable summary of an audit event for governance dashboards.
+ */
+export function formatAuditEventSummary(event: {
+  action: string;
+  actorRole: string | null;
+  entityType: string;
+}): string {
+  const actor = event.actorRole ? event.actorRole.replace(/_/g, " ").toLowerCase() : "system";
+  const action = event.action.replace(/_/g, " ").toLowerCase();
+  const entity = event.entityType.toLowerCase();
+  return `${actor.charAt(0).toUpperCase() + actor.slice(1)} performed ${action} on ${entity}`;
+}
