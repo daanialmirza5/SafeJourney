@@ -81,9 +81,11 @@ const HI: Dictionary = {
   "Your referral journey is complete.": "आपकी रेफरल यात्रा पूर्ण हो गई है।",
   "This referral was cancelled. Please speak with your doctor about next steps.":
     "यह रेफरल रद्द कर दिया गया था। कृपया अगले कदमों के बारे में अपने डॉक्टर से बात करें।",
-  "Your care team is coordinating the next step.": "आपकी देखभाल टीम अगले कदम का समन्वय कर रही है।",
-
   "Don't let a referral end with a piece of paper.": "रेफरल को कागज़ के एक टुकड़े पर खत्म न होने दें।",
+  "Emergency helpline": "आपातकालीन हेल्पलाइन",
+  "Maternal health record": "मातृ स्वास्थ्य रिकॉर्ड",
+  "Postpartum care": "प्रसवोत्तर देखभाल",
+  "Immunization reminder": "टीकाकरण अनुस्मारक",
 };
 
 const MR: Dictionary = {
@@ -146,6 +148,10 @@ const MR: Dictionary = {
   "Your care team is coordinating the next step.": "तुमची काळजी टीम पुढील पाऊल समन्वयित करत आहे.",
 
   "Don't let a referral end with a piece of paper.": "रेफरलला कागदाच्या तुकड्यावर संपू देऊ नका.",
+  "Emergency helpline": "आपत्कालीन हेल्पलाइन",
+  "Maternal health record": "मातृ आरोग्य नोंद",
+  "Postpartum care": "प्रसूतीनंतरची काळजी",
+  "Immunization reminder": "लसीकरण स्मरणपत्र",
 };
 
 const DICTIONARIES: Record<SupportedLanguage, Dictionary> = { en: {}, hi: HI, mr: MR };
