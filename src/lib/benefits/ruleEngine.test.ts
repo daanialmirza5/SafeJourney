@@ -24,6 +24,21 @@ describe("deterministic benefit rule engine", () => {
     expect(result.result).toBe("NOT_APPLICABLE");
   });
 
+  it("matches state in a case-insensitive manner", () => {
+    const result = evaluateBenefit(baseContext, "ACTIVE", { applicableStates: ["maharashtra", "karnataka"] }, []);
+    expect(result.result).toBe("POTENTIALLY_APPLICABLE");
+  });
+
+  it("handles null or undefined state by marking NOT_APPLICABLE when state required", () => {
+    const result = evaluateBenefit(
+      { ...baseContext, state: null },
+      "ACTIVE",
+      { applicableStates: ["Maharashtra"] },
+      []
+    );
+    expect(result.result).toBe("NOT_APPLICABLE");
+  });
+
   it("marks NOT_APPLICABLE when a newborn case is required but absent", () => {
     const result = evaluateBenefit(
       { ...baseContext, hasNewbornCase: false },

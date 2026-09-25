@@ -19,7 +19,7 @@ export interface BenefitConditions {
 }
 
 export interface BenefitCaseContext {
-  state: string;
+  state: string | null;
   transportRequired: boolean;
   hasNewbornCase: boolean;
   confirmedDocumentTypes: string[];
@@ -48,10 +48,14 @@ export function evaluateBenefit(
   }
 
   if (conditions.applicableStates && conditions.applicableStates.length > 0) {
-    if (!conditions.applicableStates.includes(context.state)) {
+    const normalizedState = (context.state || "").trim().toLowerCase();
+    const matched = conditions.applicableStates.some(
+      (s) => s.trim().toLowerCase() === normalizedState
+    );
+    if (!matched) {
       return {
         result: "NOT_APPLICABLE",
-        reason: `Based on configured rules, this pathway applies in ${conditions.applicableStates.join(", ")}, not ${context.state}.`,
+        reason: `Based on configured rules, this pathway applies in ${conditions.applicableStates.join(", ")}, not ${context.state || "unspecified location"}.`,
         requiredDocuments: documentRequirements,
         nextActions: [],
       };
