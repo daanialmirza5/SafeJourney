@@ -74,3 +74,20 @@ pnpm-lock.yaml
 scripts/_deck_screens/
 scripts/_capture_deck_screens.mjs
 scripts/build_deck.py
+
+# demo recording and scratch video scripts
+*.mp4
+*.srt
+scripts/_demo_*
+scripts/_doc_screens/
+scripts/compose_video.py
+scripts/gen_srt.py
+scripts/record_demo*.mjs
+grid.py
+unpacked/
+SAFEJOURNEY_COMPLETE_DEMO.mp4
+SAFEJOURNEY_SYNCED_SUBTITLES.srt
+SAFEJOURNEY_SYNCED_VIDEO_SCRIPT.md
+SAFEJOURNEY_SYNCED_VIDEO_SCRIPT.txt
+SAFEJOURNEY_VIDEO_AUDIT.md
+SAFEJOURNEY_VIDEO_FEATURE_MATRIX.md

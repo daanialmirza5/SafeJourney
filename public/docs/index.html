@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SafeJourney Handbook</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;}
+  img{max-width:100%;}
+  [hidden]{display:none!important;}
+  :root{
+    --bg:#f6f7f5;
+    --surface:#ffffff;
+    --surface-2:#eef2f0;
+    --text:#101c18;
+    --text-muted:#4b5a54;
+    --text-faint:#7c8a83;
+    --accent:#0f6a5c;
+    --accent-strong:#0a4f45;
+    --accent-soft:#dcece7;
+    --border:#dde3e0;
+    --warn-bg:#fdf3e7;
+    --warn-text:#7a4a12;
+    --warn-border:#f0d9b8;
+    --ok-bg:#e8f3ec;
+    --ok-text:#1f6b45;
+    --no-bg:#f2eee9;
+    --no-text:#7c8a83;
+    --code-bg:#0f1e1a;
+    --code-text:#d9ece6;
+    --shadow: 0 1px 2px rgba(16,28,24,0.04), 0 8px 24px -12px rgba(16,28,24,0.12);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0d1310;
+      --surface:#141b18;
+      --surface-2:#1a2420;
+      --text:#eaf1ed;
+      --text-muted:#a9b8b1;
+      --text-faint:#7c8a83;
+      --accent:#3fb69d;
+      --accent-strong:#6bd4bc;
+      --accent-soft:#1c332c;
+      --border:#26332e;
+      --warn-bg:#2c2418;
+      --warn-text:#e3b877;
+      --warn-border:#4a3a22;
+      --ok-bg:#16281f;
+      --ok-text:#7ed3a6;
+      --no-bg:#1c2320;
+      --no-text:#8a9a92;
+      --code-bg:#0a1512;
+      --code-text:#bfe3d7;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0d1310;
+    --surface:#141b18;
+    --surface-2:#1a2420;
+    --text:#eaf1ed;
+    --text-muted:#a9b8b1;
+    --text-faint:#7c8a83;
+    --accent:#3fb69d;
+    --accent-strong:#6bd4bc;
+    --accent-soft:#1c332c;
+    --border:#26332e;
+    --warn-bg:#2c2418;
+    --warn-text:#e3b877;
+    --warn-border:#4a3a22;
+    --ok-bg:#16281f;
+    --ok-text:#7ed3a6;
+    --no-bg:#1c2320;
+    --no-text:#8a9a92;
+    --code-bg:#0a1512;
+    --code-text:#bfe3d7;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    line-height:1.6;
+    padding-inline:20px;
+    padding-block:0;
+  }
+  .wrap{max-width:920px;margin:0 auto;}
+  h1,h2,h3{font-family:'Fraunces',Georgia,serif;text-wrap:balance;letter-spacing:-0.01em;color:var(--text);}
+  h1{font-size:clamp(2rem,5vw,3rem);font-weight:700;margin:0 0 8px;}
+  h2{font-size:clamp(1.4rem,3vw,1.8rem);font-weight:600;margin:0 0 6px;}
+  h3{font-size:1.05rem;font-weight:600;margin:0 0 4px;}
+  p{margin:0 0 14px;color:var(--text-muted);max-width:68ch;}
+  a{color:var(--accent-strong);}
+  code, .mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:0.85em;}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:0.72rem;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--accent);
+    font-weight:500;
+  }
+
+  /* ---- header / nav ---- */
+  .topbar{
+    position:sticky;
+    top:env(safe-area-inset-top,0px);
+    z-index:20;
+    background:color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+    margin-inline:-20px;
+    padding-inline:20px;
+  }
+  .topbar-inner{
+    max-width:920px;margin:0 auto;
+    display:flex;align-items:center;justify-content:space-between;
+    padding-block:12px;gap:12px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:9px;font-weight:700;font-size:0.95rem;}
+  .brand .mark{
+    width:26px;height:26px;border-radius:7px;background:var(--accent);
+    color:#fff;display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;font-weight:700;font-size:0.85rem;flex-shrink:0;
+  }
+  nav.toc{display:flex;gap:16px;flex-wrap:wrap;}
+  nav.toc a{color:var(--text-muted);text-decoration:none;font-size:0.82rem;font-weight:500;}
+  nav.toc a:hover{color:var(--accent-strong);}
+
+  /* ---- hero ---- */
+  .hero{padding-block:44px 30px;}
+  .hero .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+  .tag{
+    font-size:0.72rem;font-weight:600;padding:4px 10px;border-radius:99px;
+    background:var(--accent-soft);color:var(--accent-strong);
+    font-family:'JetBrains Mono',monospace;letter-spacing:0.02em;
+  }
+  .lede{font-size:1.1rem;color:var(--text);max-width:60ch;}
+  .lede strong{color:var(--text);}
+
+  .cta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;}
+  .btn{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:10px 18px;border-radius:10px;font-weight:600;font-size:0.88rem;
+    text-decoration:none;border:1px solid transparent;
+  }
+  .btn.primary{background:var(--accent);color:#fff;}
+  .btn.ghost{background:var(--surface);color:var(--text);border-color:var(--border);}
+
+  /* ---- sections ---- */
+  section{padding-block:38px;border-top:1px solid var(--border);}
+  section:first-of-type{border-top:none;}
+  .section-head{margin-bottom:22px;}
+
+  /* problem / solution */
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:640px){.split{grid-template-columns:1fr;}}
+  .card{
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;
+    padding:20px 22px;box-shadow:var(--shadow);
+  }
+  .card h3{margin-bottom:8px;}
+  .card p{margin-bottom:0;}
+  .card.problem{border-top:3px solid #b3673f;}
+  .card.solution{border-top:3px solid var(--accent);}
+
+  /* roles */
+  .roles{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:18px;}
+  .role{
+    background:var(--surface);border:1px solid var(--border);border-radius:12px;
+    padding:16px;display:flex;flex-direction:column;gap:6px;
+  }
+  .role .icon{
+    width:34px;height:34px;border-radius:9px;background:var(--accent-soft);
+    display:flex;align-items:center;justify-content:center;font-size:1rem;
+  }
+  .role h3{font-size:0.95rem;}
+  .role p{font-size:0.85rem;margin:0;color:var(--text-faint);}
+
+  /* journey steps */
+  .journey{position:relative;margin-top:24px;padding-left:28px;}
+  .journey::before{
+    content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;
+    background:var(--border);
+  }
+  .step{position:relative;padding-bottom:22px;}
+  .step:last-child{padding-bottom:0;}
+  .step::before{
+    content:"";position:absolute;left:-28px;top:3px;width:18px;height:18px;
+    border-radius:50%;background:var(--surface);border:2px solid var(--accent);
+  }
+  .step .who{
+    font-family:'JetBrains Mono',monospace;font-size:0.72rem;font-weight:500;
+    color:var(--accent-strong);text-transform:uppercase;letter-spacing:0.06em;
+    margin-bottom:3px;
+  }
+  .step h3{font-size:1rem;margin-bottom:3px;}
+  .step p{margin-bottom:0;font-size:0.92rem;}
+
+  /* screenshots */
+  .shots{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;margin-top:20px;}
+  figure{margin:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);}
+  figure img{display:block;width:100%;height:auto;border-bottom:1px solid var(--border);}
+  figcaption{padding:11px 14px;}
+  figcaption .who{font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;}
+  figcaption .cap{font-size:0.85rem;color:var(--text-muted);margin-top:2px;}
+
+  /* diagrams */
+  .diagram-box{
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;
+    padding:20px;box-shadow:var(--shadow);overflow-x:auto;margin-top:18px;
+  }
+  .diagram-box .mermaid{min-width:560px;}
+
+  /* stack table */
+  table{width:100%;border-collapse:collapse;font-size:0.88rem;}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);}
+  th{color:var(--text-faint);font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;}
+  td .mono{color:var(--accent-strong);}
+  .table-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);margin-top:18px;}
+  .table-wrap table{margin:0;}
+  .table-wrap th:first-child, .table-wrap td:first-child{padding-left:16px;}
+
+  /* status pills */
+  .pill{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:99px;font-size:0.75rem;font-weight:600;}
+  .pill.yes{background:var(--ok-bg);color:var(--ok-text);}
+  .pill.sim{background:var(--warn-bg);color:var(--warn-text);}
+  .pill.no{background:var(--no-bg);color:var(--no-text);}
+
+  /* honesty / caveats */
+  .note{
+    background:var(--warn-bg);border:1px solid var(--warn-border);color:var(--warn-text);
+    border-radius:12px;padding:14px 16px;font-size:0.88rem;margin-top:14px;
+  }
+  .note strong{color:inherit;}
+
+  footer{padding-block:36px 60px;color:var(--text-faint);font-size:0.82rem;}
+  footer a{color:var(--text-faint);}
+
+  ul.plain{padding-left:20px;margin:0 0 14px;}
+  ul.plain li{color:var(--text-muted);margin-bottom:6px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="mark">S</span> SafeJourney</div>
+    <nav class="toc">
+      <a href="#why">Why</a>
+      <a href="#roles">Who uses it</a>
+      <a href="#how">How it works</a>
+      <a href="#screens">Screens</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#stack">Tech stack</a>
+      <a href="#status">Honest status</a>
+    </nav>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section class="hero">
+    <div class="tag-row">
+      <span class="tag">Health-a-thon 2026</span>
+      <span class="tag">Maternal &amp; Newborn Referrals</span>
+    </div>
+    <h1>SafeJourney</h1>
+    <p class="lede">
+      A referral doesn't fail because a doctor makes the wrong call. It fails in the gaps
+      afterward &mdash; a phone call that doesn't get through, a form that gets lost, a family
+      that never hears back. <strong>SafeJourney is the coordination layer that closes those gaps</strong>,
+      keeping a maternal or newborn referral connected from the moment a doctor creates it to the
+      moment the case is fully closed &mdash; across the doctor, the receiving hospital, transport,
+      the patient's own family, and the community health worker who checks in afterward.
+    </p>
+    <div class="cta-row">
+      <a class="btn primary" href="#how">See how it works &rarr;</a>
+      <a class="btn ghost" href="#screens">Jump to screenshots</a>
+    </div>
+  </section>
+
+  <section id="why">
+    <div class="section-head">
+      <div class="eyebrow">Why we're building this</div>
+      <h2>Referrals shouldn't end with a piece of paper</h2>
+    </div>
+    <div class="split">
+      <div class="card problem">
+        <h3>The problem</h3>
+        <p>
+          When a doctor refers a mother or newborn to another facility, that referral creates a
+          chain of dependencies: the receiving hospital has to know and accept, transport has to
+          be arranged, documents have to travel with the patient, financial/administrative paperwork
+          has to be tracked, and someone has to follow up after discharge. Today that chain runs on
+          phone calls and paper. If one link drops, nobody notices until it's too late &mdash; and the
+          family is usually the last to find out what's happening to their own case.
+        </p>
+      </div>
+      <div class="card solution">
+        <h3>Our solution</h3>
+        <p>
+          SafeJourney doesn't replace clinical decisions &mdash; doctors still decide what's medically
+          right. It replaces the <em>coordination</em> around that decision with one shared, live case
+          record: every role reads and writes to the same referral, so nothing depends on someone
+          remembering to make a phone call. The system verifies rules (has the back-referral been
+          acknowledged? are follow-up tasks done?) so a case can't be closed while something real is
+          still outstanding.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="roles">
+    <div class="section-head">
+      <div class="eyebrow">Who actually uses it</div>
+      <h2>Five roles, one shared case</h2>
+      <p>Every one of these is a real, distinct login in the app &mdash; not a mockup of a role.</p>
+    </div>
+    <div class="roles">
+      <div class="role"><div class="icon">🩺</div><h3>Doctor</h3><p>Creates the referral, links it to a registered patient, and later acknowledges the back-referral.</p></div>
+      <div class="role"><div class="icon">🏥</div><h3>Coordinator</h3><p>Sits at the receiving facility. Accepts the case, arranges transport, confirms arrival and discharge.</p></div>
+      <div class="role"><div class="icon">🤰</div><h3>Patient</h3><p>The mother or family. Watches her own referral move through each stage in plain language.</p></div>
+      <div class="role"><div class="icon">🚶</div><h3>Follow-up worker (ASHA)</h3><p>A community health worker who closes the loop after discharge with home visits and check-ins.</p></div>
+      <div class="role"><div class="icon">⚙️</div><h3>Admin</h3><p>Manages facilities, users, notification templates and the follow-up schedule.</p></div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="section-head">
+      <div class="eyebrow">How it works</div>
+      <h2>One case, followed end to end</h2>
+      <p>This is the real lifecycle a referral goes through inside SafeJourney &mdash; the same sequence shown in the recorded demo.</p>
+    </div>
+    <div class="journey">
+      <div class="step">
+        <div class="who">Patient</div>
+        <h3>1&nbsp;&middot;&nbsp;Registers her own account</h3>
+        <p>A real signup form creates her login and a linked patient record &mdash; before any referral exists, so she can watch it appear later.</p>
+      </div>
+      <div class="step">
+        <div class="who">Doctor</div>
+        <h3>2&nbsp;&middot;&nbsp;Creates the referral</h3>
+        <p>Searches the real patient directory, links the case to her account, picks a receiving hospital, marks whether transport is needed, and submits. A referral code is generated (e.g. <span class="mono">SJ-2026-46439</span>).</p>
+      </div>
+      <div class="step">
+        <div class="who">Patient</div>
+        <h3>3&nbsp;&middot;&nbsp;Sees it appear, live</h3>
+        <p>Her already-open dashboard is reloaded and the new case is there &mdash; read straight from the same database the doctor just wrote to, not a separate copy.</p>
+      </div>
+      <div class="step">
+        <div class="who">Coordinator</div>
+        <h3>4&nbsp;&middot;&nbsp;Accepts, arranges transport</h3>
+        <p>Accepts the case, requests transport, assigns a vehicle (demo-mode &mdash; see honest status below), and progresses it: en&nbsp;route &rarr; picked&nbsp;up &rarr; in&nbsp;transit.</p>
+      </div>
+      <div class="step">
+        <div class="who">Coordinator</div>
+        <h3>5&nbsp;&middot;&nbsp;Confirms arrival &amp; discharge</h3>
+        <p>Confirms the patient arrived, then records discharge. A destination is required &mdash; this is administrative coordination, never a clinical fitness call.</p>
+      </div>
+      <div class="step">
+        <div class="who">Coordinator &rarr; Doctor</div>
+        <h3>6&nbsp;&middot;&nbsp;Back-referral &amp; a real guardrail</h3>
+        <p>The coordinator drafts a back-referral summary and sends it home. Trying to close the case too early is <strong>refused by the server itself</strong> with the exact list of what's still outstanding &mdash; not a UI trick, a real backend rule.</p>
+      </div>
+      <div class="step">
+        <div class="who">Doctor</div>
+        <h3>7&nbsp;&middot;&nbsp;Acknowledges &amp; assigns follow-up</h3>
+        <p>Acknowledges the back-referral and assigns the case to a community follow-up worker, which creates the follow-up tasks.</p>
+      </div>
+      <div class="step">
+        <div class="who">Follow-up worker</div>
+        <h3>8&nbsp;&middot;&nbsp;Completes follow-up</h3>
+        <p>Logs in, opens the case, and marks each task complete. The moment nothing is left open, <strong>SafeJourney closes the referral automatically</strong> &mdash; no one has to remember to.</p>
+      </div>
+      <div class="step">
+        <div class="who">Everyone</div>
+        <h3>9&nbsp;&middot;&nbsp;Same closed case, everywhere</h3>
+        <p>Doctor and patient both see the identical closed state and full timeline &mdash; the same source of truth, not separate copies that might disagree.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="screens">
+    <div class="section-head">
+      <div class="eyebrow">What it actually looks like</div>
+      <h2>Real screens, freshly captured</h2>
+      <p>Every image below is a live screenshot of the running application, taken this session &mdash; not a mockup.</p>
+    </div>
+    <div class="shots">
+      <figure>
+        <img src="img/01-landing.png" alt="SafeJourney landing page">
+        <figcaption><div class="who">Public</div><div class="cap">Landing page &mdash; the problem/solution framing every visitor sees first.</div></figcaption>
+      </figure>
+      <figure>
+        <img src="img/03-doctor-dashboard.png" alt="Doctor command center dashboard">
+        <figcaption><div class="who">Doctor</div><div class="cap">Referral Command Center &mdash; active cases, what needs action, and quick stats.</div></figcaption>
+      </figure>
+      <figure>
+        <img src="img/04-create-referral.png" alt="Create referral form">
+        <figcaption><div class="who">Doctor</div><div class="cap">Create Referral &mdash; search the real patient directory, pick a receiving hospital.</div></figcaption>
+      </figure>
+      <figure>
+        <img src="img/06-coordinator-dashboard.png" alt="Coordinator dashboard">
+        <figcaption><div class="who">Coordinator</div><div class="cap">Referrals queue with live counts &mdash; pending, acknowledged, delayed, closed.</div></figcaption>
+      </figure>
+      <figure>
+        <img src="img/08-referral-detail.png" alt="Referral detail and passport">
+        <figcaption><div class="who">Shared case</div><div class="cap">Referral Passport &mdash; timeline, QR code, and status every role reads from.</div></figcaption>
+      </figure>
+      <figure>
+        <img src="img/09-patient-dashboard.png" alt="Patient journey view">
+        <figcaption><div class="who">Patient</div><div class="cap">My Referral Journey &mdash; the same case, explained in plain language for the family.</div></figcaption>
+      </figure>
+      <figure>
+        <img src="img/10-followup-dashboard.png" alt="Follow-up worker dashboard">
+        <figcaption><div class="who">Follow-up worker</div><div class="cap">Community Follow-Up Center &mdash; assigned home visits and continuity check-ins.</div></figcaption>
+      </figure>
+      <figure>
+        <img src="img/11-admin-panel.png" alt="Admin panel">
+        <figcaption><div class="who">Admin</div><div class="cap">System health, demo-data tools, and configurable follow-up windows.</div></figcaption>
+      </figure>
+      <figure>
+        <img src="img/12-analytics.png" alt="Analytics dashboard">
+        <figcaption><div class="who">Admin</div><div class="cap">Analytics &mdash; closed-loop rate and case-volume metrics across facilities.</div></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="architecture">
+    <div class="section-head">
+      <div class="eyebrow">Under the hood, part 1</div>
+      <h2>Architecture diagram</h2>
+      <p>How a request actually travels through the system &mdash; one application, one shared database, five kinds of logged-in users.</p>
+    </div>
+    <div class="diagram-box">
+      <pre class="mermaid">
+flowchart TB
+  subgraph Users["Five real logins"]
+    Doctor(["🩺 Doctor"])
+    Coordinator(["🏥 Coordinator"])
+    Patient(["🤰 Patient / family"])
+    Worker(["🚶 Follow-up worker"])
+    Admin(["⚙️ Admin"])
+  end
+
+  Doctor & Coordinator & Patient & Worker & Admin --> Browser["Browser session\n(its own cookie / login)"]
+
+  Browser -->|HTTPS| NextApp["Next.js app (App Router)\nPages + API routes, same codebase"]
+
+  subgraph NextApp_internal[" "]
+    Auth["Auth check\nJWT cookie + role"]
+    Authz["Authorization rules\ncanAccessReferral / canActOnFacility"]
+    API["/api/referrals, /transport,\n/back-referral, /follow-ups ..."]
+  end
+
+  NextApp --> Auth --> Authz --> API
+  API -->|Prisma ORM| DB[("SQLite database\none shared source of truth")]
+  DB --> API
+
+  API --> Notif["In-app notifications\n(created on write, read on poll)"]
+  API --> Audit["Audit log\nevery status change recorded"]
+      </pre>
+    </div>
+    <p style="margin-top:14px;font-size:0.88rem;">
+      Every role hits the <em>same</em> Next.js server and the <em>same</em> database &mdash; there's no
+      separate backend per role. What changes per login is which actions the authorization layer allows
+      and which slice of data a query returns.
+    </p>
+  </section>
+
+  <section id="technical">
+    <div class="section-head">
+      <div class="eyebrow">Under the hood, part 2</div>
+      <h2>Technical diagram &mdash; one referral's life</h2>
+      <p>The same nine-step journey from above, drawn as an actual request sequence across roles.</p>
+    </div>
+    <div class="diagram-box">
+      <pre class="mermaid">
+sequenceDiagram
+  participant P as Patient
+  participant Doc as Doctor
+  participant DB as Shared Database
+  participant Coord as Coordinator
+  participant Worker as Follow-up worker
+
+  P->>DB: Register account (POST /api/auth/register)
+  Doc->>DB: Create referral (POST /api/referrals)
+  Note over DB: referral row created,\nstatus = CREATED
+  P->>DB: Reload dashboard (GET, own session)
+  DB-->>P: Referral now visible
+  Coord->>DB: Accept referral (POST /accept)
+  Coord->>DB: Request + progress transport (PATCH /transport)
+  Coord->>DB: Confirm arrival, then discharge
+  Coord->>DB: Send back-referral (POST /back-referral)
+  Coord--xDB: Try to close early (POST /close)
+  DB--xCoord: 409 refused — lists unresolved items
+  Doc->>DB: Acknowledge back-referral, assign worker
+  Note over DB: follow-up tasks created
+  Worker->>DB: Complete each follow-up task
+  DB-->>DB: Last task closed → auto CLOSE
+  Doc->>DB: View closed case
+  P->>DB: View closed case (identical state)
+      </pre>
+    </div>
+    <div class="note">
+      <strong>Being precise about "live":</strong> updates travel by each browser reading the same
+      database on load or reload &mdash; not a push channel. No screen in the app currently claims
+      WebSockets or server-sent events, and this document doesn't either.
+    </div>
+  </section>
+
+  <section id="stack">
+    <div class="section-head">
+      <div class="eyebrow">Under the hood, part 3</div>
+      <h2>Tech stack</h2>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Layer</th><th>Choice</th><th>Why</th></tr>
+        <tr><td>Framework</td><td class="mono">Next.js 14 (App Router)</td><td>Pages and API routes in one codebase, server components for authorization checks</td></tr>
+        <tr><td>Database</td><td class="mono">SQLite via Prisma ORM</td><td>Zero-config for a demo/pilot; schema is a documented drop-in swap to Postgres for production</td></tr>
+        <tr><td>Auth</td><td class="mono">JWT cookie + bcrypt</td><td>Session per role, checked server-side on every request</td></tr>
+        <tr><td>Validation</td><td class="mono">Zod</td><td>Every API boundary validates input shape before it touches the database</td></tr>
+        <tr><td>UI</td><td class="mono">React 18 + Tailwind CSS</td><td>Component-driven, consistent design system across all five role views</td></tr>
+        <tr><td>Testing</td><td class="mono">Vitest + Playwright</td><td>Unit tests plus real browser end-to-end scenarios (registration, rescue, closed-loop)</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section id="status">
+    <div class="section-head">
+      <div class="eyebrow">Being straight about where things stand</div>
+      <h2>Honest status</h2>
+      <p>What's real, what's intentionally simulated for a demo, and what doesn't exist yet.</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Capability</th><th>Status</th><th>Notes</th></tr>
+        <tr><td>Referral lifecycle (create &rarr; close)</td><td><span class="pill yes">Real</span></td><td>Every transition is a real API call against the live database</td></tr>
+        <tr><td>Cross-role live view</td><td><span class="pill yes">Real</span></td><td>Shared database reads, refreshed on load &mdash; not push-based</td></tr>
+        <tr><td>Closure guardrail (won't close early)</td><td><span class="pill yes">Real</span></td><td>Server refuses with an exact list of what's outstanding</td></tr>
+        <tr><td>Vehicle / transport assignment</td><td><span class="pill sim">Simulated</span></td><td>Vehicle label + ETA are operator-entered; no GPS/telemetry hardware exists</td></tr>
+        <tr><td>Back-referral summary drafting</td><td><span class="pill sim">Simulated</span></td><td>Deterministic template, editable by the coordinator &mdash; not a live AI call</td></tr>
+        <tr><td>Benefit/entitlement matching</td><td><span class="pill sim">Simulated</span></td><td>Rule-based evaluation against seeded scheme data, not a government API</td></tr>
+        <tr><td>SMS / WhatsApp delivery</td><td><span class="pill no">Not built</span></td><td>Notifications are in-app only in this build</td></tr>
+        <tr><td>Separate "receiving hospital" login</td><td><span class="pill no">N/A</span></td><td>That role <em>is</em> the Coordinator account at that facility</td></tr>
+      </table>
+    </div>
+    <p style="margin-top:14px;font-size:0.86rem;">
+      For the full line-by-line breakdown with timestamps, see <span class="mono">SAFEJOURNEY_VIDEO_FEATURE_MATRIX.md</span>
+      and <span class="mono">SAFEJOURNEY_VIDEO_AUDIT.md</span> in the project repository, produced alongside the recorded walkthrough.
+    </p>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    Built for Health-a-thon 2026 &middot; SafeJourney &mdash; a coordination layer for maternal &amp; newborn referrals.
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'default',
+    securityLevel: 'loose'
+  });
+</script>
+</body>
+</html>
