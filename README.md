@@ -24,9 +24,10 @@
 
 ---
 
-## 🚀 Live Demo
+## 🚀 Live Demo & Evaluator Guide
 
 - **Deployed Application**: [https://safejourney-w7dz.onrender.com](https://safejourney-w7dz.onrender.com)
+- **⚡ Evaluator Cheatsheet**: [docs/EVALUATOR_CHEAT_SHEET.md](docs/EVALUATOR_CHEAT_SHEET.md) *(3-minute and 5-minute judge walkthrough scenarios)*
 - **Instant Demo Switcher**: Pre-configured with 1-click role logins for Doctor (PHC), Intake Coordinator (District Hospital), Follow-up Worker (ASHA), Patient, and District Administrator.
 
 ---
