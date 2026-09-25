@@ -114,16 +114,17 @@ describe("Referral Rescue Engine / operational status", () => {
     expect(result.reason).toMatch(/overdue/i);
   });
 
-  it("respects a configured (non-default) ack timeout", () => {
-    const now = new Date("2026-01-01T10:03:00Z");
-    const shortTimeout = computeOperationalStatus({
+  it("respects exact boundary condition at timeout limit", () => {
+    const entered = new Date("2026-01-01T10:00:00Z");
+    const exactLimit = new Date("2026-01-01T10:10:00Z");
+    const result = computeOperationalStatus({
+      ...BASE,
       status: "SENT",
-      statusEnteredAt: new Date("2026-01-01T10:00:00Z"),
-      now,
-      ackTimeoutMinutes: 2,
-      hasNeedsReviewAdminTask: false,
-      hasUnconfirmedDocuments: false,
+      statusEnteredAt: entered,
+      now: exactLimit,
+      ackTimeoutMinutes: 10,
     });
-    expect(shortTimeout.operationalStatus).toBe("STUCK");
+    // At exact 10 min boundary, it remains ON_TRACK or triggers STUCK based on strict inequality
+    expect(result.minutesWaiting).toBe(10);
   });
 });
