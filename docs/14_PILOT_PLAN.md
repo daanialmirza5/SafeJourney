@@ -40,3 +40,12 @@
   requirements — the current implementation is a reasonable default, not a substitute for that review.
 - Sign-off from whoever owns the source benefit-rule data that the seeded `BenefitRule` conditions/documents
   are accurate for the pilot state — this application deliberately never scrapes or infers scheme rules.
+
+## District Pilot Readiness Checklist
+
+- [ ] **Infrastructure**: Production PostgreSQL database provisioned with daily automated backups.
+- [ ] **Storage**: S3 / Cloudflare R2 bucket provisioned with bucket-level encryption.
+- [ ] **Facility Calibration**: Initial corridor paired with confirmed bed capacity and intake contact points.
+- [ ] **Staff Training**: Referring doctors, triage coordinators, and ASHA community workers oriented on the 5-step lifecycle.
+- [ ] **QR Printers / Terminals**: Basic thermal or standard A4 printer available at referring PHC/CHC for paper passports.
+- [ ] **Helpline Escalation**: Designated district escalation coordinator for handling stalled referrals flagged by the Rescue Engine.
