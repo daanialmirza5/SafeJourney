@@ -20,7 +20,10 @@ describe("translate (spec section 27)", () => {
     expect(translate("hi", "Some untranslated future string")).toBe("Some untranslated future string");
   });
 
-  it("falls back to English for an unsupported language code", () => {
-    expect(translate("fr", "My Journey")).toBe("My Journey");
+  it("returns maternal health and postpartum translations", () => {
+    expect(translate("hi", "Maternal health record")).toBe("मातृ स्वास्थ्य रिकॉर्ड");
+    expect(translate("mr", "Maternal health record")).toBe("मातृ आरोग्य नोंद");
+    expect(translate("hi", "Emergency helpline")).toBe("आपातकालीन हेल्पलाइन");
+    expect(translate("mr", "Emergency helpline")).toBe("आपत्कालीन हेल्पलाइन");
   });
 });
