@@ -6,6 +6,7 @@ import {
   InvalidTransitionError,
   nextStatuses,
   isTerminalStatus,
+  isActionRequiredStatus,
   getRemainingLifecycleSteps,
   calculateLifecycleProgressPercentage,
   validateTransitionSequence,
@@ -214,6 +215,23 @@ describe("referral state machine", () => {
         1725900000000
       );
       expect(entry.checksum).toBe(entry2.checksum);
+    });
+  });
+
+  describe("status query helpers", () => {
+    it("correctly identifies action-required statuses", () => {
+      expect(isActionRequiredStatus("SENT")).toBe(true);
+      expect(isActionRequiredStatus("TRANSPORT_REQUESTED")).toBe(true);
+      expect(isActionRequiredStatus("BACK_REFERRED")).toBe(true);
+      expect(isActionRequiredStatus("FOLLOW_UP_PENDING")).toBe(true);
+      expect(isActionRequiredStatus("CLOSED")).toBe(false);
+      expect(isActionRequiredStatus("DRAFT")).toBe(false);
+    });
+
+    it("correctly identifies terminal statuses", () => {
+      expect(isTerminalStatus("CLOSED")).toBe(true);
+      expect(isTerminalStatus("CANCELLED")).toBe(true);
+      expect(isTerminalStatus("IN_TRANSIT")).toBe(false);
     });
   });
 });

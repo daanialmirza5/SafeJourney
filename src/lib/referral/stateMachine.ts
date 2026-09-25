@@ -350,3 +350,10 @@ export function generateAuditTrailEntry(
     checksum,
   };
 }
+
+/**
+ * Checks if a referral is in an active in-flight status requiring immediate action.
+ */
+export function isActionRequiredStatus(status: ReferralStatus): boolean {
+  return ["SENT", "TRANSPORT_REQUESTED", "BACK_REFERRED", "FOLLOW_UP_PENDING"].includes(status);
+}
