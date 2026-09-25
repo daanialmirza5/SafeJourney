@@ -5,6 +5,12 @@ All endpoints are Next.js Route Handlers under `src/app/api/**`. Authentication 
 authenticated user" via `requireUser()`. All error responses share the shape
 `{ error: { code, message, details? } }` with the matching HTTP status (see `src/lib/apiError.ts`).
 
+## Health & Monitoring
+
+| Method | Path | Auth | Notes |
+|---|---|---|---|
+| GET | `/api/health` | none | Uptime probe, service status, and deployment health check |
+
 ## Auth
 
 | Method | Path | Auth | Body | Notes |
