@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -62,8 +62,8 @@ export function CreateReferralForm({ facilities }: { facilities: Facility[] }) {
   const [doctorNote, setDoctorNote] = useState("");
   const [adminNotes, setAdminNotes] = useState("");
 
-  // Load registered patients for quick selection
-  useState(() => {
+  // Load registered patients for quick selection (client-side, once on mount)
+  useEffect(() => {
     apiFetch<{ patients: PatientOption[] }>("/api/patients")
       .then((res) => {
         if (res?.patients) {
@@ -79,7 +79,7 @@ export function CreateReferralForm({ facilities }: { facilities: Facility[] }) {
       .catch(() => {
         // Fall back to new patient mode if search API is not accessible
       });
-  });
+  }, []);
 
   function handleSelectExisting(pId: string) {
     setSelectedPatientId(pId);

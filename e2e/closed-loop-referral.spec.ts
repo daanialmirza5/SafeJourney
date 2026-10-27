@@ -31,6 +31,9 @@ test.describe.serial("closed-loop referral journey", () => {
     const { context, page } = await loginAs(browser, DEMO_USER_EMAILS.doctor);
 
     await page.goto("/referrals/new");
+    // Once registered patients load, the form defaults to "Registered Patient";
+    // switch to a new patient (the toggle only appears after that load).
+    await page.getByRole("button", { name: "New Patient" }).click();
     await page.getByTestId("patient-name").fill("Ananya E2E Patil");
     await page
       .getByTestId("receiving-facility")
@@ -49,7 +52,8 @@ test.describe.serial("closed-loop referral journey", () => {
     const referral = await getReferral(context.request, referralId);
     expect(referral.status).toBe("SENT");
     expect(referral.transportRequired).toBe(true);
-    await expect(page.getByRole("heading", { name: referral.referralCode })).toBeVisible();
+    // The case hero shows the code next to a "Referral Case" label (the h1 is the patient).
+    await expect(page.getByText(referral.referralCode, { exact: true }).first()).toBeVisible();
 
     await context.close();
   });
@@ -151,7 +155,7 @@ test.describe.serial("closed-loop referral journey", () => {
     await page.goto(`/referrals/${referralId}`);
 
     await page.getByRole("button", { name: "Acknowledge back-referral" }).click();
-    await page.getByTestId("follow-up-assignee").selectOption({ label: "Sangeeta ASHA Worker" });
+    await page.getByTestId("follow-up-assignee").selectOption({ label: "Meera Bai (ASHA)" });
     await page.getByTestId("acknowledge-back-referral").click();
 
     await expect(page.getByText("Follow-up & newborn continuity")).toBeVisible();

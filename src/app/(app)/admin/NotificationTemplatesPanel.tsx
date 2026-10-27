@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, RotateCcw, Check, X } from "lucide-react";
 import { apiFetch } from "@/lib/clientApi";
@@ -19,6 +19,9 @@ interface Template {
 
 export function NotificationTemplatesPanel({ templates: initial }: { templates: Template[] }) {
   const [templates, setTemplates] = useState(initial);
+  // Pick up fresh server data after router.refresh() (e.g. a revert, whose
+  // default text only the server knows); useState alone ignores new props.
+  useEffect(() => setTemplates(initial), [initial]);
   const [editingKey, setEditingKey] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");

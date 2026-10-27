@@ -13,7 +13,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![Prisma](https://img.shields.io/badge/Prisma-5.22-2D3748?style=for-the-badge&logo=prisma&logoColor=white)](https://www.prisma.io/)
-[![Vitest](https://img.shields.io/badge/Vitest-172_Tests_Passing-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)](https://vitest.dev/)
+[![CI](https://github.com/daanialmirza5/SafeJourney/actions/workflows/ci.yml/badge.svg)](https://github.com/daanialmirza5/SafeJourney/actions/workflows/ci.yml)
 [![Playwright](https://img.shields.io/badge/Playwright-E2E_Suite-45ba4b?style=for-the-badge&logo=playwright&logoColor=white)](https://playwright.dev/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
@@ -336,7 +336,7 @@ npm run typecheck
 # Code style and lint validation (0 warnings or errors)
 npm run lint
 
-# Run all 172 Vitest unit and integration tests (16 test files, 100% passing)
+# Run the Vitest unit and integration tests
 npm run test
 
 # Run Playwright E2E smoke tests

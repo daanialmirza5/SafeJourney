@@ -10,8 +10,10 @@ import type { RoleName } from "@/lib/types/enums";
 export async function POST(req: NextRequest) {
   try {
     // 10 attempts / minute per IP -- generous enough for real typos, tight
-    // enough to blunt a brute-force credential-stuffing attempt.
-    checkRateLimit(`login:${clientKeyFromRequest(req)}`, 10, 60_000);
+    // enough to blunt a brute-force credential-stuffing attempt. Overridable
+    // only so the E2E suite (many logins from one host) is not throttled.
+    const limit = Number(process.env.LOGIN_RATE_LIMIT_PER_MINUTE) || 10;
+    checkRateLimit(`login:${clientKeyFromRequest(req)}`, limit, 60_000);
     const body = loginSchema.parse(await req.json());
     const user = await db.user.findUnique({ where: { email: body.email.toLowerCase() } });
     if (!user || !(await verifyPassword(body.password, user.passwordHash))) {
