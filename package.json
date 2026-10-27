@@ -11,7 +11,7 @@
     "test": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:smoke": "playwright test --config=playwright.smoke.config.ts",
-    "test:e2e:screenshots": "playwright test e2e/capture-all-screenshots.spec.ts",
+    "test:e2e:screenshots": "playwright test --config=playwright.screenshots.config.ts",
     "db:seed": "tsx prisma/seed.ts"
   },
   "devDependencies": {

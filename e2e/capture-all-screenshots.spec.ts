@@ -1,8 +1,19 @@
 import { test, expect } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
+import type { Page } from "@playwright/test";
+import { DEMO_USER_EMAILS, DEMO_PASSWORD } from "./helpers";
 
 const SCREENSHOT_DIR = path.resolve(process.cwd(), "docs/screenshots");
+
+// Signs in through the real login API (the login page's per-role buttons are
+// not stable selectors), then opens the role's home page like a UI login would.
+async function signInAs(page: Page, email: string) {
+  const res = await page.request.post("/api/auth/login", { data: { email, password: DEMO_PASSWORD } });
+  expect(res.ok()).toBeTruthy();
+  await page.goto("/dashboard");
+  await page.waitForLoadState("networkidle");
+}
 
 test.beforeAll(async () => {
   if (!fs.existsSync(SCREENSHOT_DIR)) {
@@ -34,8 +45,7 @@ test.describe.serial("Demo Screenshots Capture", () => {
   test("03 - Doctor Dashboard & Referrals", async ({ page }) => {
     await page.goto("/login");
     await page.waitForLoadState("networkidle");
-    await page.locator("button", { hasText: "Doctor" }).click();
-    await page.waitForURL("**/dashboard");
+    await signInAs(page, DEMO_USER_EMAILS.doctor);
     await page.waitForLoadState("networkidle");
     await page.waitForTimeout(1000);
     await page.screenshot({
@@ -47,8 +57,7 @@ test.describe.serial("Demo Screenshots Capture", () => {
   test("04 - Create Referral & Smart Matching", async ({ page }) => {
     await page.goto("/login");
     await page.waitForLoadState("networkidle");
-    await page.locator("button", { hasText: "Doctor" }).click();
-    await page.waitForURL("**/dashboard");
+    await signInAs(page, DEMO_USER_EMAILS.doctor);
     await page.goto("/referrals/new");
     await page.waitForLoadState("networkidle");
     await page.waitForTimeout(1000);
@@ -61,8 +70,7 @@ test.describe.serial("Demo Screenshots Capture", () => {
   test("05 - Referral Passport & Benefit Radar", async ({ page }) => {
     await page.goto("/login");
     await page.waitForLoadState("networkidle");
-    await page.locator("button", { hasText: "Doctor" }).click();
-    await page.waitForURL("**/dashboard");
+    await signInAs(page, DEMO_USER_EMAILS.doctor);
     await page.waitForLoadState("networkidle");
 
     const judgeBtn = page.locator("button:has-text('Launch Judge Demo')");
@@ -87,8 +95,7 @@ test.describe.serial("Demo Screenshots Capture", () => {
   test("06 - Coordinator Triage & Bed Management", async ({ page }) => {
     await page.goto("/login");
     await page.waitForLoadState("networkidle");
-    await page.locator("button", { hasText: "Coordinator" }).click();
-    await page.waitForURL("**/dashboard");
+    await signInAs(page, DEMO_USER_EMAILS.coordinator);
     await page.waitForLoadState("networkidle");
     await page.waitForTimeout(1000);
     await page.screenshot({
@@ -100,8 +107,7 @@ test.describe.serial("Demo Screenshots Capture", () => {
   test("07 - Patient Live Journey & Multilingual Portal", async ({ page }) => {
     await page.goto("/login");
     await page.waitForLoadState("networkidle");
-    await page.locator("button", { hasText: "Patient" }).click();
-    await page.waitForURL("**/dashboard");
+    await signInAs(page, DEMO_USER_EMAILS.patient);
     await page.waitForLoadState("networkidle");
     await page.waitForTimeout(1000);
     await page.screenshot({
@@ -113,8 +119,7 @@ test.describe.serial("Demo Screenshots Capture", () => {
   test("08 - Referral Rescue Engine & SLA Escalation", async ({ page }) => {
     await page.goto("/login");
     await page.waitForLoadState("networkidle");
-    await page.locator("button", { hasText: "Doctor" }).click();
-    await page.waitForURL("**/dashboard");
+    await signInAs(page, DEMO_USER_EMAILS.doctor);
     await page.waitForLoadState("networkidle");
 
     const rescueBtn = page.locator("button:has-text('Demo Rescue Scenario')");
@@ -147,8 +152,7 @@ test.describe.serial("Demo Screenshots Capture", () => {
   test("10 - Admin Governance & Audit Trail", async ({ page }) => {
     await page.goto("/login");
     await page.waitForLoadState("networkidle");
-    await page.locator("button", { hasText: "Admin" }).click();
-    await page.waitForURL("**/dashboard");
+    await signInAs(page, DEMO_USER_EMAILS.admin);
     await page.goto("/admin");
     await page.waitForLoadState("networkidle");
     await page.waitForTimeout(1000);
@@ -161,8 +165,7 @@ test.describe.serial("Demo Screenshots Capture", () => {
   test("11 - Analytics & Performance Metrics", async ({ page }) => {
     await page.goto("/login");
     await page.waitForLoadState("networkidle");
-    await page.locator("button", { hasText: "Admin" }).click();
-    await page.waitForURL("**/dashboard");
+    await signInAs(page, DEMO_USER_EMAILS.admin);
     await page.goto("/analytics");
     await page.waitForLoadState("networkidle");
     await page.waitForTimeout(1000);

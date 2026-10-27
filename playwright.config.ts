@@ -5,6 +5,9 @@ const BASE_URL = `http://localhost:${PORT}`;
 
 export default defineConfig({
   testDir: "./e2e",
+  // Screenshot capture asserts nothing and overwrites docs/screenshots/;
+  // it runs on its own via `npm run test:e2e:screenshots`.
+  testIgnore: /capture-all-screenshots\.spec\.ts/,
   globalSetup: require.resolve("./e2e/global-setup.ts"),
   fullyParallel: false,
   // Force fully sequential execution across every spec file, not just
@@ -28,17 +31,22 @@ export default defineConfig({
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: `npx next dev -p ${PORT}`,
+    // CI serves a production build: `next dev` compiles routes on demand and
+    // intermittently corrupts its manifest under test load ("Unexpected end
+    // of JSON input"), which made CI failures depend on timing.
+    command: process.env.CI ? `npx next build && npx next start -p ${PORT}` : `npx next dev -p ${PORT}`,
     url: BASE_URL,
     reuseExistingServer: false,
     // First-compile of a cold .next cache can be slow on this environment's
-    // disk; give it plenty of room rather than risk a flaky false failure.
-    timeout: 180_000,
+    // disk, and CI also builds first; give it plenty of room.
+    timeout: 300_000,
     env: {
       DATABASE_URL: "file:./e2e-test.db",
       JWT_SECRET: "e2e-test-secret",
       DEMO_MODE: "true",
       REFERRAL_ACK_TIMEOUT_MINUTES: "10",
+      // Every test logs in from the same host; lift the per-IP login limit.
+      LOGIN_RATE_LIMIT_PER_MINUTE: "1000",
     },
   },
 });

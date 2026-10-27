@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getCurrentUser, ForbiddenError } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getReferralOrThrow } from "@/lib/referral/referralService";
 import { canAccessReferral } from "@/lib/referral/access";
@@ -32,7 +32,10 @@ export default async function ReferralDetailPage({ params }: { params: { id: str
     notFound();
   }
   if (!(await canAccessReferral(user, referral))) {
-    throw new ForbiddenError("You do not have access to this referral.");
+    // 404 rather than a thrown ForbiddenError: production builds replace
+    // thrown server-component messages with a generic one, and a 404 does not
+    // reveal that the referral exists. (app)/not-found.tsx covers this case.
+    notFound();
   }
 
   const ackTimeoutMinutes = await getAckTimeoutMinutes();

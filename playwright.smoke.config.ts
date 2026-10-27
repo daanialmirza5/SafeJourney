@@ -43,6 +43,8 @@ export default defineConfig({
       JWT_SECRET: "e2e-test-secret",
       DEMO_MODE: "true",
       REFERRAL_ACK_TIMEOUT_MINUTES: "10",
+      // Every test logs in from the same host; lift the per-IP login limit.
+      LOGIN_RATE_LIMIT_PER_MINUTE: "1000",
     },
   },
 });

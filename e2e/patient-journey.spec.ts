@@ -14,14 +14,14 @@ test("patient sees a plain-language journey, next action, and Referral Passport"
   const { page } = await loginAs(browser, DEMO_USER_EMAILS.patient);
 
   await page.goto("/dashboard");
-  await expect(page.getByRole("heading", { name: "My Journey" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "My Referral Journey" })).toBeVisible();
   await expect(page.getByText("What happens next?")).toBeVisible();
 
   // No raw status codes/jargon should leak into the patient's primary view.
   await expect(page.getByText("ACKNOWLEDGED", { exact: true })).toHaveCount(0);
   await expect(page.getByText("TRANSPORT_REQUESTED", { exact: true })).toHaveCount(0);
 
-  await page.getByRole("link", { name: /View full details/i }).click();
+  await page.getByRole("link", { name: /Show My Referral Passport QR/i }).click();
   await page.waitForURL(/\/referrals\/c[a-z0-9]{20,}$/);
 
   await expect(page.getByText("Referral Passport")).toBeVisible();
@@ -46,9 +46,8 @@ test("patient cannot open a referral they have no relationship to", async ({ bro
 
   const { page } = await loginAs(browser, DEMO_USER_EMAILS.patient);
   const response = await page.goto(`/referrals/${someOtherReferralId}`);
-  // Server-rendered error boundary (src/app/(app)/error.tsx) surfaces the
-  // ForbiddenError thrown by canAccessReferral() -- never silently shows
-  // someone else's case.
+  // The page responds 404 via src/app/(app)/not-found.tsx -- never silently
+  // shows someone else's case, and does not confirm the case exists.
   expect(response?.status()).toBeGreaterThanOrEqual(400);
   await expect(page.getByText(/do not have access/i)).toBeVisible();
 });

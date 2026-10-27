@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { loginAs, DEMO_USER_EMAILS } from "./helpers";
+import { loginAs, DEMO_USER_EMAILS, DEMO_PASSWORD } from "./helpers";
 
 /**
  * Covers the three flows added after the original closed-loop suite that
@@ -16,9 +16,12 @@ test("admin can edit a notification template's copy and revert it", async ({ bro
 
   const row = page.locator("li", { hasText: "REFERRAL_CREATED_COORDINATOR" });
   await row.getByRole("button", { name: "Edit template" }).click();
-  await row.locator("input").fill("E2E custom title");
-  await row.locator("textarea").fill("E2E custom body for {{referralCode}}.");
-  await row.getByRole("button", { name: "Save" }).click();
+  // Edit mode replaces the row's content (including the key), so target the
+  // single open editor instead; `row` matches again once it is saved.
+  const editor = page.locator("li", { has: page.getByLabel("Title") });
+  await editor.getByLabel("Title").fill("E2E custom title");
+  await editor.getByLabel("Body").fill("E2E custom body for {{referralCode}}.");
+  await editor.getByRole("button", { name: "Save" }).click();
 
   await expect(row.getByText("E2E custom title")).toBeVisible();
   await expect(row.getByRole("button", { name: "Revert to default" })).toBeVisible();
@@ -75,7 +78,7 @@ test("deactivating a user blocks login immediately, and reactivating restores it
 
   // A fresh login attempt is blocked.
   const blockedLogin = await adminContext.request.post("/api/auth/login", {
-    data: { email: testEmail, password: "demo1234" },
+    data: { email: testEmail, password: DEMO_PASSWORD },
   });
   expect(blockedLogin.status()).toBe(403);
 
