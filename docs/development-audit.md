@@ -52,7 +52,7 @@ doesn't mirror `next build` exactly).
 
 ### 3.2 Fabricated documentation describing non-existent — and disallowed — functionality (fixed in this release)
 
-Three docs added in commits `cce697b`/`aa109c3`/`ca71423` (`ENGINEERING_GUIDE.md`,
+Two docs added in earlier commits (`ENGINEERING_GUIDE.md`,
 `TECHNICAL_DEBT.md`) and a rewritten `README.md` described features that **do not exist anywhere in
 `src/`**, verified by grep and direct file reads:
 

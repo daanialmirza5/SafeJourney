@@ -357,7 +357,7 @@ to the dedicated accessibility stage). See `docs/newborn-continuity-review.md` f
   `@typescript-eslint/no-explicit-any`; `next build` runs lint as part of compilation, so the build had been
   broken since the commit that introduced it. Narrowed to `catch (err)` with an `err instanceof Error`
   guard.
-- Corrected three documentation files (`docs/ENGINEERING_GUIDE.md`,
+- Corrected two documentation files (`docs/ENGINEERING_GUIDE.md`,
   `docs/TECHNICAL_DEBT.md`) and `README.md`, which described a clinical "Obstetric Early Warning Score" risk
   calculator, GPS ambulance telemetry, an SMS gateway, NICU/HDU/ICU bed reservation, and an offline QR token
   said to decrypt vitals/allergy history — none of which exist anywhere in `src/`, verified by direct grep
